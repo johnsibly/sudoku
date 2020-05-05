@@ -18,7 +18,7 @@ let puzzle =   [[3, 0, 0, 8, 0, 1, 0, 0, 2],
                 [0, 0, 0, 5, 0, 9, 0, 0, 0],
                 [9, 0, 4, 0, 8, 0, 7, 0, 5],
                 [6, 0, 0, 1, 0, 7, 0, 0, 3]];
-
+let iterations = 0;
 // Initialise array with potential values
 // A single digit means cell value is known
 // If a cell contains an array instead, it will contains then cell's potential values
@@ -43,22 +43,22 @@ function columnIncludes(columnIndex, value) {
 
 function printProgress() {
     const stringPuzzle = JSON.stringify(puzzle);
-    console.log(`Current size of stringified puzzle ${stringPuzzle.length}`);
+    console.log(`Current size of stringified puzzle ${stringPuzzle.length}. Iterations = ${iterations}`);
     puzzle.forEach(row => {
         console.log(JSON.stringify(row));
     });
 }
 
-function arrayRemove(arr, value) { 
-    if (!Array.isArray(arr)) {
-        return arr;
+function arrayRemove(arrayToRemoveFrom, value) { 
+    if (!Array.isArray(arrayToRemoveFrom)) {
+        return arrayToRemoveFrom;
     }
-    const newArray = arr.filter(function(ele){ return ele != value; });
+    const newArray = arrayToRemoveFrom.filter(function(element){ return element != value; });
     // if only 1 item is left in the array, convert to number
     return newArray.length == 1 ? newArray[0] : newArray;
 }
 
-function CheckForValuesInBlock(cellY, cellX, blockY, blockX) {
+function checkForValuesInBlock(cellY, cellX, blockY, blockX) {
     if (Array.isArray(puzzle[cellY][cellX])) {
         puzzle[cellY][cellX].forEach(possibleOption => {
             let foundOptionInBlock = false;
@@ -87,6 +87,7 @@ function isPuzzleComplete() {
 }
 
 while(!isPuzzleComplete()) {
+    iterations++;
     // Analyse each row
     for (row = 0; row < 9; row++) {
         for (col = 0; col < 9; col++) {
@@ -114,17 +115,17 @@ while(!isPuzzleComplete()) {
         }
     }
     // Check within each 3x3 block which cells have a value
-    for(blockX = 0; blockX < 9; blockX = blockX +3 ) {
+    for(blockX = 0; blockX < 9; blockX = blockX + 3 ) {
         for(blockY = 0; blockY < 9; blockY = blockY + 3) {
-            CheckForValuesInBlock(blockY, blockX, blockY, blockX);
-            CheckForValuesInBlock(blockY, blockX+1, blockY, blockX);
-            CheckForValuesInBlock(blockY, blockX+2, blockY, blockX);
-            CheckForValuesInBlock(blockY+1, blockX, blockY, blockX);
-            CheckForValuesInBlock(blockY+1, blockX+1, blockY, blockX);
-            CheckForValuesInBlock(blockY+1, blockX+2, blockY, blockX);
-            CheckForValuesInBlock(blockY+2, blockX, blockY, blockX);
-            CheckForValuesInBlock(blockY+2, blockX+1, blockY, blockX);
-            CheckForValuesInBlock(blockY+2, blockX+2, blockY, blockX);
+            checkForValuesInBlock(blockY,   blockX,   blockY, blockX);
+            checkForValuesInBlock(blockY,   blockX+1, blockY, blockX);
+            checkForValuesInBlock(blockY,   blockX+2, blockY, blockX);
+            checkForValuesInBlock(blockY+1, blockX,   blockY, blockX);
+            checkForValuesInBlock(blockY+1, blockX+1, blockY, blockX);
+            checkForValuesInBlock(blockY+1, blockX+2, blockY, blockX);
+            checkForValuesInBlock(blockY+2, blockX,   blockY, blockX);
+            checkForValuesInBlock(blockY+2, blockX+1, blockY, blockX);
+            checkForValuesInBlock(blockY+2, blockX+2, blockY, blockX);
         }
     }
 }
