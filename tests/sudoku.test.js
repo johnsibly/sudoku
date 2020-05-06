@@ -21,15 +21,15 @@ it('Test simple puzzle 1', async () => {
 });
 
 it('Test simple puzzle 2', async () => {
-    const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
-                    [2, 0, 0, 0, 0, 0, 0, 1, 0],
-                    [1, 0, 0, 4, 0, 0, 0, 0, 0],
-                    [0, 9, 0, 0, 6, 0, 0, 8, 2],
-                    [0, 8, 4, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 3, 0, 6, 0, 5],
-                    [0, 0, 7, 0, 0, 5, 1, 0, 0],
-                    [0, 0, 0, 7, 0, 9, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 2, 0, 6]];
+  const puzzle = [[3, 0, 0, 8, 0, 1, 0, 0, 2], 
+                  [2, 0, 1, 0, 3, 0, 6, 0, 4],
+                  [0, 0, 0, 2, 0, 4, 0, 0, 0],
+                  [8, 0, 9, 0, 0, 0, 1, 0, 6],
+                  [0, 6, 0, 0, 0, 0, 0, 5, 0],
+                  [7, 0, 2, 0, 0, 0, 4, 0, 9],
+                  [0, 0, 0, 5, 0, 9, 0, 0, 0],
+                  [9, 0, 4, 0, 8, 0, 7, 0, 5],
+                  [6, 0, 0, 1, 0, 7, 0, 0, 3]];
   console.log(sudoku);
   const solved = sudoku.solveSudoku(puzzle);
   const stringPuzzle = JSON.stringify(solved);
@@ -37,7 +37,7 @@ it('Test simple puzzle 2', async () => {
   expect(stringPuzzle.length).toEqual(181);
 });
 
-it('Test simple puzzle 3', async () => {
+it('Test puzzle 3 (medium complexity)', async () => {
     const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
                     [2, 0, 0, 0, 0, 0, 0, 1, 0],
                     [1, 0, 0, 4, 0, 0, 0, 0, 0],

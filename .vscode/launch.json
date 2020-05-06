@@ -16,6 +16,12 @@
             "outFiles": [
                 "${workspaceRoot}/dist/**/*"
             ]
-        }
+        },
+        {
+            "name": "Run soduku.js in node",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/sudoku.js"
+          }
     ]
 }
