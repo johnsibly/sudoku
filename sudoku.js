@@ -1,5 +1,4 @@
-/*
-let puzzle =   [[5, 3, 0, 0, 7, 0, 0, 0, 0], 
+const puzzle = [[5, 3, 0, 0, 7, 0, 0, 0, 0], 
                 [6, 0, 0, 1, 9, 5, 0, 0, 0],
                 [0, 9, 8, 0, 0, 0, 0, 6, 0],
                 [8, 0, 0, 0, 6, 0, 0, 0, 3],
@@ -9,19 +8,10 @@ let puzzle =   [[5, 3, 0, 0, 7, 0, 0, 0, 0],
                 [0, 0, 0, 4, 1, 9, 0, 0, 5],
                 [0, 0, 0, 0, 8, 0, 0, 7, 9]];
 
-let puzzle =   [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
-                [2, 0, 0, 0, 0, 0, 0, 1, 0],
-                [1, 0, 0, 4, 0, 0, 0, 0, 0],
-                [0, 9, 0, 0, 6, 0, 0, 8, 2],
-                [0, 8, 4, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 3, 0, 6, 0, 5],
-                [0, 0, 7, 0, 0, 5, 1, 0, 0],
-                [0, 0, 0, 7, 0, 9, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 2, 0, 6]];
-*/
-module.exports.solveSudoku = function solveSudoku(puzzle) {
+solveSudoku(puzzle);
+function solveSudoku(puzzle) {
     let iterations = 0;
-    const maxIterations = 10;
+    const maxIterations = 20;
     // Initialise array with potential values
     // A single digit means cell value is known
     // If a cell contains an array instead, it contains the cell's potential values
@@ -136,3 +126,5 @@ module.exports.solveSudoku = function solveSudoku(puzzle) {
     printProgress();
     return puzzle;
 }
+
+module.exports.solveSudoku = solveSudoku;
