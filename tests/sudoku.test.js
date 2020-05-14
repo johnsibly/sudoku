@@ -3,24 +3,23 @@ const sudoku = require('../sudoku');
 beforeEach(() => {
 });
 
-it('Test simple puzzle 1', async () => {
-    const puzzle = [[5, 3, 0, 0, 7, 0, 0, 0, 0], 
-                    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-                    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-                    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-                    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-                    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-                    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-                    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-                    [0, 0, 0, 0, 8, 0, 0, 7, 9]];
-  console.log(sudoku);
+it('Test puzzle 1 (easy)', async () => {
+  const puzzle = [[5, 3, 0, 0, 7, 0, 0, 0, 0], 
+                  [6, 0, 0, 1, 9, 5, 0, 0, 0],
+                  [0, 9, 8, 0, 0, 0, 0, 6, 0],
+                  [8, 0, 0, 0, 6, 0, 0, 0, 3],
+                  [4, 0, 0, 8, 0, 3, 0, 0, 1],
+                  [7, 0, 0, 0, 2, 0, 0, 0, 6],
+                  [0, 6, 0, 0, 0, 0, 2, 8, 0],
+                  [0, 0, 0, 4, 1, 9, 0, 0, 5],
+                  [0, 0, 0, 0, 8, 0, 0, 7, 9]];
   const solved = sudoku.solveSudoku(puzzle);
   const stringPuzzle = JSON.stringify(solved);
 
   expect(stringPuzzle.length).toEqual(181);
 });
 
-it('Test simple puzzle 2', async () => {
+it('Test puzzle 2 (easy)', async () => {
   const puzzle = [[3, 0, 0, 8, 0, 1, 0, 0, 2], 
                   [2, 0, 1, 0, 3, 0, 6, 0, 4],
                   [0, 0, 0, 2, 0, 4, 0, 0, 0],
@@ -30,14 +29,13 @@ it('Test simple puzzle 2', async () => {
                   [0, 0, 0, 5, 0, 9, 0, 0, 0],
                   [9, 0, 4, 0, 8, 0, 7, 0, 5],
                   [6, 0, 0, 1, 0, 7, 0, 0, 3]];
-  console.log(sudoku);
   const solved = sudoku.solveSudoku(puzzle);
   const stringPuzzle = JSON.stringify(solved);
 
   expect(stringPuzzle.length).toEqual(181);
 });
 
-it('Test simple puzzle 3', async () => {
+it('Test puzzle 3 (easy)', async () => {
   const puzzle = [[0, 2, 1, 0, 7, 6, 0, 0, 0], 
                   [4, 0, 0, 0, 0, 3, 0, 0, 2],
                   [5, 0, 7, 0, 0, 9, 3, 0, 0],
@@ -47,31 +45,27 @@ it('Test simple puzzle 3', async () => {
                   [0, 0, 9, 2, 0, 0, 5, 0, 4],
                   [8, 0, 0, 7, 0, 0, 0, 0, 6],
                   [0, 0, 0, 1, 9, 0, 7, 3, 0]];
-  console.log(sudoku);
   const solved = sudoku.solveSudoku(puzzle);
   const stringPuzzle = JSON.stringify(solved);
-
   expect(stringPuzzle.length).toEqual(181);
 });
 
-it('Test puzzle 4 (medium complexity)', async () => {
-    const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
-                    [2, 0, 0, 0, 0, 0, 0, 1, 0],
-                    [1, 0, 0, 4, 0, 0, 0, 0, 0],
-                    [0, 9, 0, 0, 6, 0, 0, 8, 2],
-                    [0, 8, 4, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 3, 0, 6, 0, 5],
-                    [0, 0, 7, 0, 0, 5, 1, 0, 0],
-                    [0, 0, 0, 7, 0, 9, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 2, 0, 6]];
-  console.log(sudoku);
+it('Test puzzle 4 (medium)', async () => {
+  const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
+                  [2, 0, 0, 0, 0, 0, 0, 1, 0],
+                  [1, 0, 0, 4, 0, 0, 0, 0, 0],
+                  [0, 9, 0, 0, 6, 0, 0, 8, 2],
+                  [0, 8, 4, 0, 0, 0, 0, 0, 0],
+                  [0, 0, 0, 0, 3, 0, 6, 0, 5],
+                  [0, 0, 7, 0, 0, 5, 1, 0, 0],
+                  [0, 0, 0, 7, 0, 9, 0, 0, 0],
+                  [0, 0, 0, 0, 0, 0, 2, 0, 6]];
   const solved = sudoku.solveSudoku(puzzle);
   const stringPuzzle = JSON.stringify(solved);
-
   expect(stringPuzzle.length).toEqual(181);
 });
 
-it('Test puzzle 5 (medium complexity)', async () => {
+it('Test puzzle 5 (medium)', async () => {
   const puzzle = [[4, 0, 0, 0, 3, 9, 8, 0, 0], 
                   [0, 0, 9, 1, 0, 0, 7, 4, 0],
                   [0, 0, 5, 0, 6, 0, 0, 9, 0],
@@ -81,10 +75,37 @@ it('Test puzzle 5 (medium complexity)', async () => {
                   [0, 5, 0, 0, 7, 0, 1, 0, 0],
                   [0, 9, 4, 0, 0, 1, 5, 0, 0],
                   [0, 0, 7, 8, 4, 0, 0, 0, 2]];
-console.log(sudoku);
-const solved = sudoku.solveSudoku(puzzle);
-const stringPuzzle = JSON.stringify(solved);
-
-expect(stringPuzzle.length).toEqual(181);
+  const solved = sudoku.solveSudoku(puzzle);
+  const stringPuzzle = JSON.stringify(solved);
+  expect(stringPuzzle.length).toEqual(181);
 });
 
+it('Test puzzle 6 (hard)', async () => {
+  const puzzle = [[2, 0, 0, 0, 1, 0, 3, 0, 0], 
+                  [0, 0, 0, 2, 0, 0, 0, 1, 0],
+                  [0, 0, 0, 4, 0, 9, 0, 2, 0],
+                  [9, 3, 7, 0, 0, 0, 0, 0, 1],
+                  [5, 4, 0, 0, 0, 0, 0, 7, 8],
+                  [1, 0, 0, 0, 0, 0, 6, 3, 9],
+                  [0, 7, 0, 3, 0, 8, 0, 0, 0],
+                  [0, 8, 0, 0, 0, 6, 0, 0, 0],
+                  [0, 0, 2, 0, 7, 0, 0, 0, 5]];
+  const solved = sudoku.solveSudoku(puzzle);
+  const stringPuzzle = JSON.stringify(solved);
+  expect(stringPuzzle.length).toEqual(181);
+});
+
+it('Test puzzle 7 (evil)', async () => {
+  const puzzle = [[0, 7, 0, 0, 8, 0, 0, 0, 0], 
+                  [0, 0, 4, 0, 0, 0, 0, 0, 5],
+                  [0, 0, 0, 5, 0, 6, 0, 0, 1],
+                  [1, 0, 3, 0, 6, 0, 0, 9, 0],
+                  [0, 9, 0, 1, 0, 5, 0, 3, 0],
+                  [0, 2, 0, 0, 3, 0, 1, 0, 6],
+                  [9, 0, 0, 4, 0, 3, 0, 0, 0],
+                  [2, 0, 0, 0, 0, 0, 6, 0, 0],
+                  [0, 0, 0, 0, 2, 0, 0, 5, 0]];
+  const solved = sudoku.solveSudoku(puzzle);
+  const stringPuzzle = JSON.stringify(solved);
+  expect(stringPuzzle.length).toEqual(181);
+});
