@@ -1,4 +1,4 @@
-const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
+const samplePuzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
 [2, 0, 0, 0, 0, 0, 0, 1, 0],
 [1, 0, 0, 4, 0, 0, 0, 0, 0],
 [0, 9, 0, 0, 6, 0, 0, 8, 2],
@@ -8,7 +8,7 @@ const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8],
 [0, 0, 0, 7, 0, 9, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 2, 0, 6]];
 
-solveSudoku(puzzle);
+solveSudoku(samplePuzzle);
 function solveSudoku(puzzle) {
     const startTime = new Date();
     let iterations = 0;
@@ -94,21 +94,21 @@ function solveSudoku(puzzle) {
                             puzzle[row][col] = arrayRemove(puzzle[row][col], possibleOption);
                         }
                     });
+                }
 
-                    // check to see if one of the cell's options is unique to that column
-                    if (Array.isArray(puzzle[row][col])) {
-                        for (optionIndex = 0; optionIndex < puzzle[row][col].length; optionIndex++) {
-                            let hasOptionBeenFoundInColumn  = false;
-                            for (u_row = 0; u_row < 9 && !hasOptionBeenFoundInColumn; u_row++) {
-                                if (row != u_row && Array.isArray(puzzle[u_row][col])) {
-                                    hasOptionBeenFoundInColumn = puzzle[u_row][col].includes(puzzle[row][col][optionIndex]);
-                                }
+                // check to see if one of the cell's options is unique to that column
+                if (Array.isArray(puzzle[row][col])) {
+                    for (optionIndex = 0; optionIndex < puzzle[row][col].length; optionIndex++) {
+                        let hasOptionBeenFoundInColumn  = false;
+                        for (u_row = 0; u_row < 9 && !hasOptionBeenFoundInColumn; u_row++) {
+                            if (row != u_row && Array.isArray(puzzle[u_row][col])) {
+                                hasOptionBeenFoundInColumn = puzzle[u_row][col].includes(puzzle[row][col][optionIndex]);
                             }
-                            // if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
-                            if (!hasOptionBeenFoundInColumn) {
-                                puzzle[row][col] = puzzle[row][col][optionIndex];
-                                break;
-                            }
+                        }
+                        // if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
+                        if (!hasOptionBeenFoundInColumn) {
+                            puzzle[row][col] = puzzle[row][col][optionIndex];
+                            break;
                         }
                     }
                 }
