@@ -10,6 +10,7 @@ const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8],
 
 solveSudoku(puzzle);
 function solveSudoku(puzzle) {
+    const startTime = new Date();
     let iterations = 0;
     const maxIterations = 20;
     // Initialise array with potential values
@@ -36,7 +37,8 @@ function solveSudoku(puzzle) {
 
     function printProgress() {
         const stringPuzzle = JSON.stringify(puzzle);
-        console.log(`Current size of stringified puzzle ${stringPuzzle.length}. Iterations = ${iterations}`);
+        const executionTime = (new Date()) - startTime;
+        console.log(`Current size of stringified puzzle ${stringPuzzle.length}. Iterations = ${iterations}. Execution time = ${executionTime}ms`);
         puzzle.forEach(row => {
             console.log(JSON.stringify(row));
         });
@@ -110,12 +112,9 @@ function solveSudoku(puzzle) {
                         }
                     }
                 }
-            }
-        }
-        // Analyse each column
-        for (col = 0; col < 9; col++) {
-            for (row = 0; row < 9; row++) {
+
                 if (Array.isArray(puzzle[row][col])) { // this cell is an array so is unsolved
+                    // The column that this cell in is
                     // check all the possible items for the cell. If there already exists one of the options in the column, then remove it as an option
                     puzzle[row][col].forEach(possibleOption => {
                         if (columnIncludes(col, possibleOption)) {
@@ -125,6 +124,7 @@ function solveSudoku(puzzle) {
                 }
             }
         }
+        
         // Check within each 3x3 block which cells have a value
         for(blockX = 0; blockX < 9; blockX = blockX + 3 ) {
             for(blockY = 0; blockY < 9; blockY = blockY + 3) {
