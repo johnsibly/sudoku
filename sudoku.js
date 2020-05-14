@@ -122,6 +122,23 @@ function solveSudoku(puzzle) {
                         }
                     });
                 }
+
+                // Check if one of cell's options unique to that row
+                if (Array.isArray(puzzle[row][col])) {
+                    for (optionIndex = 0; optionIndex < puzzle[row][col].length; optionIndex++) {
+                        let hasOptionBeenFoundInRow  = false;
+                        for (u_col = 0; u_col < 9 && !hasOptionBeenFoundInRow; u_col++) {
+                            if (row != u_col && Array.isArray(puzzle[u_col][col])) {
+                                hasOptionBeenFoundInRow = puzzle[u_col][col].includes(puzzle[row][col][optionIndex]);
+                            }
+                        }
+                        // if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
+                        if (!hasOptionBeenFoundInRow) {
+                            puzzle[row][col] = puzzle[row][col][optionIndex];
+                            break;
+                        }
+                    }
+                }
             }
         }
         
