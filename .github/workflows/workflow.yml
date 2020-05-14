@@ -1,4 +1,4 @@
-name: Node Continuous Integration
+name: Run tests against Sudoku puzzle solver
 
 on:
   push:
