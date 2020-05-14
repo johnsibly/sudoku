@@ -1,12 +1,12 @@
-const puzzle = [[5, 3, 0, 0, 7, 0, 0, 0, 0], 
-                [6, 0, 0, 1, 9, 5, 0, 0, 0],
-                [0, 9, 8, 0, 0, 0, 0, 6, 0],
-                [8, 0, 0, 0, 6, 0, 0, 0, 3],
-                [4, 0, 0, 8, 0, 3, 0, 0, 1],
-                [7, 0, 0, 0, 2, 0, 0, 0, 6],
-                [0, 6, 0, 0, 0, 0, 2, 8, 0],
-                [0, 0, 0, 4, 1, 9, 0, 0, 5],
-                [0, 0, 0, 0, 8, 0, 0, 7, 9]];
+const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
+[2, 0, 0, 0, 0, 0, 0, 1, 0],
+[1, 0, 0, 4, 0, 0, 0, 0, 0],
+[0, 9, 0, 0, 6, 0, 0, 8, 2],
+[0, 8, 4, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 3, 0, 6, 0, 5],
+[0, 0, 7, 0, 0, 5, 1, 0, 0],
+[0, 0, 0, 7, 0, 9, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 2, 0, 6]];
 
 solveSudoku(puzzle);
 function solveSudoku(puzzle) {
@@ -85,13 +85,30 @@ function solveSudoku(puzzle) {
         // Analyse each row
         for (row = 0; row < 9; row++) {
             for (col = 0; col < 9; col++) {
-                if (typeof(puzzle[row][col]) == "object") { // this cell is an array so is unsolved
+                if (Array.isArray(puzzle[row][col])) { // this cell is an array so is unsolved
                     puzzle[row][col].forEach(possibleOption => {
                         // check all the possible items for the cell. If there already exists one of the options in the row, then remove it as an option
                         if (puzzle[row].includes(possibleOption)) {
                             puzzle[row][col] = arrayRemove(puzzle[row][col], possibleOption);
                         }
                     });
+
+                    // check to see if one of the cell's options is unique to that column
+                    if (Array.isArray(puzzle[row][col])) {
+                        for (optionIndex = 0; optionIndex < puzzle[row][col].length; optionIndex++) {
+                            let hasOptionBeenFoundInColumn  = false;
+                            for (u_row = 0; u_row < 9 && !hasOptionBeenFoundInColumn; u_row++) {
+                                if (row != u_row && Array.isArray(puzzle[u_row][col])) {
+                                    hasOptionBeenFoundInColumn = puzzle[u_row][col].includes(puzzle[row][col][optionIndex]);
+                                }
+                            }
+                            // if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
+                            if (!hasOptionBeenFoundInColumn) {
+                                puzzle[row][col] = puzzle[row][col][optionIndex];
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -99,8 +116,8 @@ function solveSudoku(puzzle) {
         for (col = 0; col < 9; col++) {
             for (row = 0; row < 9; row++) {
                 if (Array.isArray(puzzle[row][col])) { // this cell is an array so is unsolved
+                    // check all the possible items for the cell. If there already exists one of the options in the column, then remove it as an option
                     puzzle[row][col].forEach(possibleOption => {
-                        // check all the possible items for the cell. If there already exists one of the options in the column, then remove it as an option
                         if (columnIncludes(col, possibleOption)) {
                             puzzle[row][col] = arrayRemove(puzzle[row][col], possibleOption);
                         }
