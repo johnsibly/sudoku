@@ -1,12 +1,12 @@
-const samplePuzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
-[2, 0, 0, 0, 0, 0, 0, 1, 0],
-[1, 0, 0, 4, 0, 0, 0, 0, 0],
-[0, 9, 0, 0, 6, 0, 0, 8, 2],
-[0, 8, 4, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 3, 0, 6, 0, 5],
-[0, 0, 7, 0, 0, 5, 1, 0, 0],
-[0, 0, 0, 7, 0, 9, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 2, 0, 6]];
+const samplePuzzle = [[0, 7, 0, 0, 8, 0, 0, 0, 0], 
+[0, 0, 4, 0, 0, 0, 0, 0, 5],
+[0, 0, 0, 5, 0, 6, 0, 0, 1],
+[1, 0, 3, 0, 6, 0, 0, 9, 0],
+[0, 9, 0, 1, 0, 5, 0, 3, 0],
+[0, 2, 0, 0, 3, 0, 1, 0, 6],
+[9, 0, 0, 4, 0, 3, 0, 0, 0],
+[2, 0, 0, 0, 0, 0, 6, 0, 0],
+[0, 0, 0, 0, 2, 0, 0, 5, 0]];
 
 solveSudoku(samplePuzzle);
 function solveSudoku(puzzle) {
@@ -24,7 +24,7 @@ function solveSudoku(puzzle) {
         }
     }
 
-    function columnIncludes(columnIndex, value) {
+    function columnIncludesKnownValue(columnIndex, value) {
         let containsValue = false;
         for(rowIndex = 0; rowIndex < 9; rowIndex++) {
             if ((typeof(puzzle[rowIndex][columnIndex]) == "number") && puzzle[rowIndex][columnIndex] == value) { // this cell is an array so is unsolved
@@ -49,7 +49,7 @@ function solveSudoku(puzzle) {
             return arrayToRemoveFrom;
         }
         const newArray = arrayToRemoveFrom.filter(function(element){ return element != value; });
-        // if only 1 item is left in the array, convert to number
+        // if only 1 item is left in the array, convert to number since we've just solved this cell
         return newArray.length == 1 ? newArray[0] : newArray;
     }
 
@@ -82,9 +82,7 @@ function solveSudoku(puzzle) {
     }
 
     while(iterations < maxIterations && !isPuzzleComplete()) {
-        // printProgress();
         iterations++;
-        // Analyse each row
         for (row = 0; row < 9; row++) {
             for (col = 0; col < 9; col++) {
                 if (Array.isArray(puzzle[row][col])) { // this cell is an array so is unsolved
@@ -117,7 +115,7 @@ function solveSudoku(puzzle) {
                     // The column that this cell in is
                     // check all the possible items for the cell. If there already exists one of the options in the column, then remove it as an option
                     puzzle[row][col].forEach(possibleOption => {
-                        if (columnIncludes(col, possibleOption)) {
+                        if (columnIncludesKnownValue(col, possibleOption)) {
                             puzzle[row][col] = arrayRemove(puzzle[row][col], possibleOption);
                         }
                     });
