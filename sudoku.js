@@ -38,10 +38,11 @@ function solveSudoku(puzzle) {
     function printProgress() {
         const stringPuzzle = JSON.stringify(puzzle);
         const executionTime = (new Date()) - startTime;
-        console.log(`Current size of stringified puzzle ${stringPuzzle.length}. Iterations = ${iterations}. Execution time = ${executionTime}ms`);
+        let solvedPuzzleString = `Current size of stringified puzzle ${stringPuzzle.length}. Iterations = ${iterations}. Execution time = ${executionTime}ms\n`;
         puzzle.forEach(row => {
-            console.log(JSON.stringify(row));
+            solvedPuzzleString += JSON.stringify(row) + '\n';
         });
+        console.log(solvedPuzzleString);
     }
 
     function arrayRemove(arrayToRemoveFrom, value) { 
