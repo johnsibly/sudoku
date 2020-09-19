@@ -31,7 +31,7 @@ func main() {
 	solveSudoku(samplePuzzle)
 }
 
-func solveSudoku(puzzle [][]string) [][]string {
+func solveSudoku(puzzle [][]string) {
 	// Initialise array with potential values
 	// A single digit means cell value is known
 	// If a cell contains multiple digits instead, it contains the cell's potential values
@@ -43,5 +43,4 @@ func solveSudoku(puzzle [][]string) [][]string {
 		}
 	}
 	prettyPrint(puzzle)
-	return nil
 }
