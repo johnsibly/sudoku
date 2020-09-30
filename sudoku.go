@@ -112,6 +112,21 @@ func solveSudoku(puzzle [][]string) {
 				}
 
 				// Check if one of the cell's options is unique to that column
+				if len(puzzle[row][col]) > 1 {
+					for _, option := range puzzle[row][col] {
+						hasOptionBeenFoundInColumn := false
+						for uRow := 0; uRow < 9 && !hasOptionBeenFoundInColumn; uRow++ {
+							if row != uRow && len(puzzle[uRow][col]) > 1 {
+								hasOptionBeenFoundInColumn = strings.Index(puzzle[uRow][col], string(option)) != -1
+							}
+						}
+						// if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
+						if !hasOptionBeenFoundInColumn {
+							puzzle[row][col] = string(option)
+							break
+						}
+					}
+				}
 
 				// If a cell in unsolved...
 				if len(puzzle[row][col]) > 1 {
