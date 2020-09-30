@@ -183,7 +183,7 @@ func solveSudoku(puzzle [][]string) {
 			}
 		}
 
-		fmt.Printf("Iteration %d\n", iteration)
-		printPuzzleSize(puzzle)
+		// fmt.Printf("Iteration %d\n", iteration)
+		// printPuzzleSize(puzzle)
 	}
 }
