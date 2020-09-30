@@ -98,8 +98,6 @@ func solveSudoku(puzzle [][]string) {
 			}
 		}
 	}
-	printPuzzleSize(puzzle)
-	prettyPrint(puzzle)
 
 	const maxIterations = 20
 	for iteration := 0; iteration < maxIterations && !isPuzzleSolved(puzzle); iteration++ {
@@ -187,7 +185,5 @@ func solveSudoku(puzzle [][]string) {
 
 		fmt.Printf("Iteration %d\n", iteration)
 		printPuzzleSize(puzzle)
-		prettyPrint(puzzle)
 	}
-
 }
