@@ -27,6 +27,12 @@ func main() {
 		{"0", "0", "0", "0", "2", "0", "0", "5", "0"}}
 
 	solveSudoku(samplePuzzle)
+	wasSolved := isPuzzleSolved(samplePuzzle)
+	if wasSolved {
+		println("Successully solved")
+	} else {
+		println("Puzzle could not be solved")
+	}
 }
 
 func isPuzzleSolved(puzzle [][]string) bool {
