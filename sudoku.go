@@ -7,7 +7,10 @@ import (
 
 func prettyPrint(array [][]string) {
 	for x := range array {
-		fmt.Println(array[x])
+		for _, c := range array[x] {
+			fmt.Printf("%s\t", string(c))
+		}
+		fmt.Printf("\n")
 	}
 }
 
@@ -59,6 +62,22 @@ func columnIncludesKnownValue(columnIndex int, value string, puzzle [][]string) 
 	return containsValue
 }
 
+func checkForValuesInBlock(puzzle [][]string, cellY int, cellX int, blockY int, blockX int) {
+	if len(puzzle[cellY][cellX]) > 1 {
+		for _, possibleOption := range puzzle[cellY][cellX] {
+			foundOptionInBlock := false
+			for blockOffsetY := 0; blockOffsetY < 3; blockOffsetY++ {
+				for blockOffsetX := 0; blockOffsetX < 3; blockOffsetX++ {
+					foundOptionInBlock = foundOptionInBlock || string(possibleOption) == puzzle[blockY+blockOffsetY][blockX+blockOffsetX]
+				}
+			}
+			if foundOptionInBlock {
+				puzzle[cellY][cellX] = removeOption(puzzle[cellY][cellX], string(possibleOption))
+			}
+		}
+	}
+}
+
 func removeOption(cell string, option string) string {
 	return strings.Replace(cell, option, "", 1)
 }
@@ -92,6 +111,8 @@ func solveSudoku(puzzle [][]string) {
 					}
 				}
 
+				// Check if one of the cell's options is unique to that column
+
 				// If a cell in unsolved...
 				if len(puzzle[row][col]) > 1 {
 					// check to see if column already includes one of the options for this cell
@@ -104,13 +125,30 @@ func solveSudoku(puzzle [][]string) {
 						}
 					}
 				}
+
+				// Check if one of cell's options unique to that row
+
+				// Check within each 3x3 block which options are rulled out by already solved value
+				for blockX := 0; blockX < 9; blockX = blockX + 3 {
+					for blockY := 0; blockY < 9; blockY = blockY + 3 {
+						checkForValuesInBlock(puzzle, blockY, blockX, blockY, blockX)
+						checkForValuesInBlock(puzzle, blockY, blockX+1, blockY, blockX)
+						checkForValuesInBlock(puzzle, blockY, blockX+2, blockY, blockX)
+						checkForValuesInBlock(puzzle, blockY+1, blockX, blockY, blockX)
+						checkForValuesInBlock(puzzle, blockY+1, blockX+1, blockY, blockX)
+						checkForValuesInBlock(puzzle, blockY+1, blockX+2, blockY, blockX)
+						checkForValuesInBlock(puzzle, blockY+2, blockX, blockY, blockX)
+						checkForValuesInBlock(puzzle, blockY+2, blockX+1, blockY, blockX)
+						checkForValuesInBlock(puzzle, blockY+2, blockX+2, blockY, blockX)
+					}
+				}
+
+				// Check if one of cell's options is unique to that 3x3 block
 			}
 		}
 
 		fmt.Printf("Iteration %d\n", iteration)
 		printPuzzleSize(puzzle)
-
-		// prettyPrint(puzzle)
 	}
-
+	prettyPrint(puzzle)
 }
