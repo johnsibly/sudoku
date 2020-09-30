@@ -91,6 +91,19 @@ func solveSudoku(puzzle [][]string) {
 						}
 					}
 				}
+
+				// If a cell in unsolved...
+				if len(puzzle[row][col]) > 1 {
+					// check to see if column already includes one of the options for this cell
+					for _, option := range puzzle[row][col] {
+						for checkRow := 0; checkRow < 9; checkRow++ {
+							if puzzle[checkRow][col] == string(option) {
+								// option already exists in this column, so remove it
+								puzzle[row][col] = removeOption(puzzle[row][col], string(option))
+							}
+						}
+					}
+				}
 			}
 		}
 
