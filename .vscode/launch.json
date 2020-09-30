@@ -22,6 +22,15 @@
             "type": "node",
             "request": "launch",
             "program": "${workspaceFolder}/sudoku.js"
-          }
+        },
+        {
+            "name": "Launch Go",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${fileDirname}",
+            "env": {},
+            "args": []
+        }
     ]
 }
