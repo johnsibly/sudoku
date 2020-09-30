@@ -53,7 +53,7 @@ func printPuzzleSize(puzzle [][]string) {
 
 func columnIncludesKnownValue(columnIndex int, value string, puzzle [][]string) bool {
 	containsValue := false
-	for rowIndex, _ := range puzzle {
+	for rowIndex := range puzzle {
 		if (len(puzzle[rowIndex][columnIndex]) == 1) && puzzle[rowIndex][columnIndex] == value {
 			containsValue = true
 			break
@@ -68,7 +68,9 @@ func checkForValuesInBlock(puzzle [][]string, cellY int, cellX int, blockY int, 
 			foundOptionInBlock := false
 			for blockOffsetY := 0; blockOffsetY < 3; blockOffsetY++ {
 				for blockOffsetX := 0; blockOffsetX < 3; blockOffsetX++ {
-					foundOptionInBlock = foundOptionInBlock || string(possibleOption) == puzzle[blockY+blockOffsetY][blockX+blockOffsetX]
+					if cellY != (blockY+blockOffsetY) && cellX != (blockX+blockOffsetX) {
+						foundOptionInBlock = foundOptionInBlock || string(possibleOption) == puzzle[blockY+blockOffsetY][blockX+blockOffsetX]
+					}
 				}
 			}
 			if foundOptionInBlock {
@@ -79,6 +81,9 @@ func checkForValuesInBlock(puzzle [][]string, cellY int, cellX int, blockY int, 
 }
 
 func removeOption(cell string, option string) string {
+	if len(cell) == 1 {
+		panic("We're trying to remove the final option - something's gone badly wrong")
+	}
 	return strings.Replace(cell, option, "", 1)
 }
 
@@ -94,8 +99,11 @@ func solveSudoku(puzzle [][]string) {
 		}
 	}
 	printPuzzleSize(puzzle)
+	prettyPrint(puzzle)
+
 	const maxIterations = 20
 	for iteration := 0; iteration < maxIterations && !isPuzzleSolved(puzzle); iteration++ {
+
 		for row := 0; row < 9; row++ {
 			for col := 0; col < 9; col++ {
 				// If a cell in unsolved...
@@ -103,7 +111,7 @@ func solveSudoku(puzzle [][]string) {
 					// check to see if row already includes one of the options for this cell
 					for _, option := range puzzle[row][col] {
 						for checkCol := 0; checkCol < 9; checkCol++ {
-							if puzzle[row][checkCol] == string(option) {
+							if checkCol != col && puzzle[row][checkCol] == string(option) {
 								// option already exists in this row, so remove it
 								puzzle[row][col] = removeOption(puzzle[row][col], string(option))
 							}
@@ -116,7 +124,7 @@ func solveSudoku(puzzle [][]string) {
 					for _, option := range puzzle[row][col] {
 						hasOptionBeenFoundInColumn := false
 						for uRow := 0; uRow < 9 && !hasOptionBeenFoundInColumn; uRow++ {
-							if row != uRow && len(puzzle[uRow][col]) > 1 {
+							if row != uRow {
 								hasOptionBeenFoundInColumn = strings.Index(puzzle[uRow][col], string(option)) != -1
 							}
 						}
@@ -133,7 +141,7 @@ func solveSudoku(puzzle [][]string) {
 					// check to see if column already includes one of the options for this cell
 					for _, option := range puzzle[row][col] {
 						for checkRow := 0; checkRow < 9; checkRow++ {
-							if puzzle[checkRow][col] == string(option) {
+							if row != checkRow && puzzle[checkRow][col] == string(option) {
 								// option already exists in this column, so remove it
 								puzzle[row][col] = removeOption(puzzle[row][col], string(option))
 							}
@@ -142,6 +150,21 @@ func solveSudoku(puzzle [][]string) {
 				}
 
 				// Check if one of cell's options unique to that row
+				if len(puzzle[row][col]) > 1 {
+					for _, option := range puzzle[row][col] {
+						hasOptionBeenFoundInRow := false
+						for uCol := 0; uCol < 9 && !hasOptionBeenFoundInRow; uCol++ {
+							if col != uCol {
+								hasOptionBeenFoundInRow = strings.Index(puzzle[row][uCol], string(option)) != -1
+							}
+						}
+						// if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
+						if !hasOptionBeenFoundInRow {
+							puzzle[row][col] = string(option)
+							break
+						}
+					}
+				}
 
 				// Check within each 3x3 block which options are rulled out by already solved value
 				for blockX := 0; blockX < 9; blockX = blockX + 3 {
@@ -164,6 +187,7 @@ func solveSudoku(puzzle [][]string) {
 
 		fmt.Printf("Iteration %d\n", iteration)
 		printPuzzleSize(puzzle)
+		prettyPrint(puzzle)
 	}
-	prettyPrint(puzzle)
+
 }
