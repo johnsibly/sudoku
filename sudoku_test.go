@@ -4,19 +4,6 @@ import (
 	"testing"
 )
 
-func isPuzzleSolved(puzzle [][]string) bool {
-	isSolved := true
-	for _, row := range puzzle {
-		for _, cell := range row {
-			if len(cell) > 1 {
-				isSolved = false
-			}
-		}
-	}
-
-	return isSolved
-}
-
 func TestPuzzle1Easy(t *testing.T) {
 	puzzle := [][]string{{"5", "3", "0", "0", "7", "0", "0", "0", "0"},
 		{"6", "0", "0", "1", "9", "5", "0", "0", "0"},
