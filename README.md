@@ -1,8 +1,7 @@
 # Sudoku
 Solve sudoku puzzles using pure JavaScript
 
-![Run tests against Sudoku puzzle solver](https://github.com/johnsibly/sudoku/workflows/Run%20tests%20against%20Sudoku%20puzzle%20solver/badge.svg)
-CI using github actions [here](https://github.com/johnsibly/sudoku/actions?query=workflow%3A%22Run+tests+against+Sudoku+puzzle+solver%22)
+[![CI using github actions](https://github.com/johnsibly/sudoku/workflows/Run%20tests%20against%20Sudoku%20puzzle%20solver/badge.svg)](https://github.com/johnsibly/sudoku/actions?query=workflow%3A%22Run+tests+against+Sudoku+puzzle+solver%22)
 
 # Setup
 ```
