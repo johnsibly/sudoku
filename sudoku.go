@@ -33,6 +33,7 @@ func main() {
 	} else {
 		println("Puzzle could not be solved")
 	}
+	prettyPrint(samplePuzzle)
 }
 
 func isPuzzleSolved(puzzle [][]string) bool {
@@ -79,7 +80,7 @@ func checkForValuesInBlock(puzzle [][]string, cellY int, cellX int, blockY int, 
 					}
 				}
 			}
-			if foundOptionInBlock {
+			if len(puzzle[cellY][cellX]) > 1 && foundOptionInBlock {
 				puzzle[cellY][cellX] = removeOption(puzzle[cellY][cellX], string(possibleOption))
 			}
 		}
@@ -115,7 +116,7 @@ func solveSudoku(puzzle [][]string) {
 					// check to see if row already includes one of the options for this cell
 					for _, option := range puzzle[row][col] {
 						for checkCol := 0; checkCol < 9; checkCol++ {
-							if checkCol != col && puzzle[row][checkCol] == string(option) {
+							if len(puzzle[row][col]) > 1 && checkCol != col && puzzle[row][checkCol] == string(option) {
 								// option already exists in this row, so remove it
 								puzzle[row][col] = removeOption(puzzle[row][col], string(option))
 							}
@@ -128,7 +129,7 @@ func solveSudoku(puzzle [][]string) {
 					for _, option := range puzzle[row][col] {
 						hasOptionBeenFoundInColumn := false
 						for uRow := 0; uRow < 9 && !hasOptionBeenFoundInColumn; uRow++ {
-							if row != uRow {
+							if row != uRow && len(puzzle[uRow][col]) > 1 {
 								hasOptionBeenFoundInColumn = strings.Index(puzzle[uRow][col], string(option)) != -1
 							}
 						}
@@ -145,7 +146,7 @@ func solveSudoku(puzzle [][]string) {
 					// check to see if column already includes one of the options for this cell
 					for _, option := range puzzle[row][col] {
 						for checkRow := 0; checkRow < 9; checkRow++ {
-							if row != checkRow && puzzle[checkRow][col] == string(option) {
+							if len(puzzle[row][col]) > 1 && row != checkRow && puzzle[checkRow][col] == string(option) {
 								// option already exists in this column, so remove it
 								puzzle[row][col] = removeOption(puzzle[row][col], string(option))
 							}
@@ -158,7 +159,7 @@ func solveSudoku(puzzle [][]string) {
 					for _, option := range puzzle[row][col] {
 						hasOptionBeenFoundInRow := false
 						for uCol := 0; uCol < 9 && !hasOptionBeenFoundInRow; uCol++ {
-							if col != uCol {
+							if col != uCol && len(puzzle[row][uCol]) > 1 {
 								hasOptionBeenFoundInRow = strings.Index(puzzle[row][uCol], string(option)) != -1
 							}
 						}
@@ -169,26 +170,23 @@ func solveSudoku(puzzle [][]string) {
 						}
 					}
 				}
-
-				// Check within each 3x3 block which options are rulled out by already solved value
-				for blockX := 0; blockX < 9; blockX = blockX + 3 {
-					for blockY := 0; blockY < 9; blockY = blockY + 3 {
-						checkForValuesInBlock(puzzle, blockY, blockX, blockY, blockX)
-						checkForValuesInBlock(puzzle, blockY, blockX+1, blockY, blockX)
-						checkForValuesInBlock(puzzle, blockY, blockX+2, blockY, blockX)
-						checkForValuesInBlock(puzzle, blockY+1, blockX, blockY, blockX)
-						checkForValuesInBlock(puzzle, blockY+1, blockX+1, blockY, blockX)
-						checkForValuesInBlock(puzzle, blockY+1, blockX+2, blockY, blockX)
-						checkForValuesInBlock(puzzle, blockY+2, blockX, blockY, blockX)
-						checkForValuesInBlock(puzzle, blockY+2, blockX+1, blockY, blockX)
-						checkForValuesInBlock(puzzle, blockY+2, blockX+2, blockY, blockX)
-					}
-				}
-
 				// Check if one of cell's options is unique to that 3x3 block
 			}
 		}
-
+		// Check within each 3x3 block which options are rulled out by already solved value
+		for blockX := 0; blockX < 9; blockX = blockX + 3 {
+			for blockY := 0; blockY < 9; blockY = blockY + 3 {
+				checkForValuesInBlock(puzzle, blockY, blockX, blockY, blockX)
+				checkForValuesInBlock(puzzle, blockY, blockX+1, blockY, blockX)
+				checkForValuesInBlock(puzzle, blockY, blockX+2, blockY, blockX)
+				checkForValuesInBlock(puzzle, blockY+1, blockX, blockY, blockX)
+				checkForValuesInBlock(puzzle, blockY+1, blockX+1, blockY, blockX)
+				checkForValuesInBlock(puzzle, blockY+1, blockX+2, blockY, blockX)
+				checkForValuesInBlock(puzzle, blockY+2, blockX, blockY, blockX)
+				checkForValuesInBlock(puzzle, blockY+2, blockX+1, blockY, blockX)
+				checkForValuesInBlock(puzzle, blockY+2, blockX+2, blockY, blockX)
+			}
+		}
 		// fmt.Printf("Iteration %d\n", iteration)
 		// printPuzzleSize(puzzle)
 	}
