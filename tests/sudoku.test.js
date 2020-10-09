@@ -1,4 +1,4 @@
-const sudoku = require('../sudoku');
+const sudoku = require('../sudoku.js');
 
 beforeEach(() => {
 });
