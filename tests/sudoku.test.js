@@ -20,7 +20,6 @@ function isPuzzleComplete(puzzle) {
         cellValues.add(puzzle[blockY+2][blockX]);
         cellValues.add(puzzle[blockY+2][blockX+1]);
         cellValues.add(puzzle[blockY+2][blockX+2]);
-        console.log(cellValues);
         isSolved = cellValues.size == 9;
         if (!isSolved) {
           console.log('stop');
