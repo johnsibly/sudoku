@@ -81,7 +81,6 @@ func TestPuzzle4Medium(t *testing.T) {
 	}
 }
 
-/*
 func TestPuzzle5Medium(t *testing.T) {
 	puzzle := [][]string{
 		{"4", "0", "0", "0", "3", "9", "8", "0", "0"},
@@ -100,7 +99,6 @@ func TestPuzzle5Medium(t *testing.T) {
 		prettyPrint(puzzle)
 	}
 }
-*/
 
 func TestPuzzle6Hard(t *testing.T) {
 	puzzle := [][]string{
@@ -135,7 +133,9 @@ func TestPuzzle7Evil(t *testing.T) {
 	solved := isPuzzleSolved(puzzle)
 	if !solved {
 		t.Error("Should have been able to solve puzzle")
+
 	}
+	prettyPrint(puzzle)
 }
 
 func TestPuzzle8Evil(t *testing.T) {
@@ -153,6 +153,7 @@ func TestPuzzle8Evil(t *testing.T) {
 	solved := isPuzzleSolved(puzzle)
 	if !solved {
 		t.Error("Should have been able to solve puzzle")
+		prettyPrint(puzzle)
 	}
 }
 
@@ -171,6 +172,7 @@ func TestPuzzle9TakeABreak(t *testing.T) {
 	solved := isPuzzleSolved(puzzle)
 	if !solved {
 		t.Error("Should have been able to solve puzzle")
+		prettyPrint(puzzle)
 	}
 }
 
@@ -189,5 +191,6 @@ func TestPuzzle10TakeABreak(t *testing.T) {
 	solved := isPuzzleSolved(puzzle)
 	if !solved {
 		t.Error("Should have been able to solve puzzle")
+		prettyPrint(puzzle)
 	}
 }
