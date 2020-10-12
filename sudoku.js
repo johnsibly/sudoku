@@ -1,3 +1,14 @@
+/*
+const samplePuzzle = [[0, 7, 0, 0, 8, 0, 0, 0, 0], 
+[0, 0, 4, 0, 0, 0, 0, 0, 5],
+[0, 0, 0, 5, 0, 6, 0, 0, 1],
+[1, 0, 3, 0, 6, 0, 0, 9, 0],
+[0, 9, 0, 1, 0, 5, 0, 3, 0],
+[0, 2, 0, 0, 3, 0, 1, 0, 6],
+[9, 0, 0, 4, 0, 3, 0, 0, 0],
+[2, 0, 0, 0, 0, 0, 6, 0, 0],
+[0, 0, 0, 0, 2, 0, 0, 5, 0]]; */
+
 const samplePuzzle = [[0, 7, 0, 0, 8, 0, 0, 0, 0], 
 [0, 0, 4, 0, 0, 0, 0, 0, 5],
 [0, 0, 0, 5, 0, 6, 0, 0, 1],
@@ -27,7 +38,7 @@ function solveSudoku(puzzle) {
     function columnIncludesKnownValue(columnIndex, value) {
         let containsValue = false;
         for(rowIndex = 0; rowIndex < 9; rowIndex++) {
-            if ((typeof(puzzle[rowIndex][columnIndex]) == "number") && puzzle[rowIndex][columnIndex] == value) { // this cell is an array so is unsolved
+            if ((typeof(puzzle[rowIndex][columnIndex]) == "number") && puzzle[rowIndex][columnIndex] == value) { // this cell is a number so contains a know value
                 containsValue = true;
                 break;
             }
@@ -100,8 +111,16 @@ function solveSudoku(puzzle) {
                     for (optionIndex = 0; optionIndex < puzzle[row][col].length; optionIndex++) {
                         let hasOptionBeenFoundInColumn  = false;
                         for (u_row = 0; u_row < 9 && !hasOptionBeenFoundInColumn; u_row++) {
-                            if (row != u_row && Array.isArray(puzzle[u_row][col])) {
-                                hasOptionBeenFoundInColumn = puzzle[u_row][col].includes(puzzle[row][col][optionIndex]);
+                            if (row != u_row)  {
+                                if (Array.isArray(puzzle[u_row][col])) {
+                                    hasOptionBeenFoundInColumn = puzzle[u_row][col].includes(puzzle[row][col][optionIndex]);
+                                } else {
+                                    try {
+                                    hasOptionBeenFoundInColumn = puzzle[u_row][col] == puzzle[row][col][optionIndex];
+                                    } catch (ex) {
+                                        console.log(ex + "can't process " + puzzle[u_row][col])
+                                    }
+                                }
                             }
                         }
                         // if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
@@ -127,14 +146,56 @@ function solveSudoku(puzzle) {
                     for (optionIndex = 0; optionIndex < puzzle[row][col].length; optionIndex++) {
                         let hasOptionBeenFoundInRow  = false;
                         for (u_col = 0; u_col < 9 && !hasOptionBeenFoundInRow; u_col++) {
-                            if (row != u_col && Array.isArray(puzzle[u_col][col])) {
-                                hasOptionBeenFoundInRow = puzzle[u_col][col].includes(puzzle[row][col][optionIndex]);
+                            if (col != u_col) {
+                                if (Array.isArray(puzzle[row][u_col])) {
+                                    hasOptionBeenFoundInRow = puzzle[row][u_col].includes(puzzle[row][col][optionIndex]);
+                                } else {
+                                    try {
+                                        hasOptionBeenFoundInRow = puzzle[row][u_col] == puzzle[row][col][optionIndex];
+                                    } catch (ex) {
+                                        console.log(ex + "can't process " + puzzle[row][u_col])
+                                    }
+                                }
                             }
                         }
                         // if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
                         if (!hasOptionBeenFoundInRow) {
                             puzzle[row][col] = puzzle[row][col][optionIndex];
                             break;
+                        }
+                    }
+                }
+
+                // Coupling: e.g. [1,2] & [1,2] in block/row/column => remove these options from rest of block/row/column
+                if (Array.isArray(puzzle[row][col]) && puzzle[row][col].length == 2) {
+                    let hasMatchingCoupleBeenFound  = false;
+                    for (u_col = 0; u_col < 9; u_col++) {
+                        if (col != u_col) {
+                            if (JSON.stringify(puzzle[row][u_col]) == JSON.stringify(puzzle[row][col])) {
+                                console.log("Coupling found in row: " + puzzle[row][u_col]);
+                                const cuplet1 = puzzle[row][u_col][0];
+                                const cuplet2 = puzzle[row][u_col][1];
+
+                                for (remove_col = 0; remove_col < 9; remove_col++) {
+                                    if (remove_col != col && remove_col != u_col) {
+                                        puzzle[row][remove_col] = arrayRemove(puzzle[row][remove_col], cuplet1);
+                                        puzzle[row][remove_col] = arrayRemove(puzzle[row][remove_col], cuplet2);
+                                    }
+                                }
+                                
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (Array.isArray(puzzle[row][col]) && puzzle[row][col].length == 2) {
+                    let hasMatchingCoupleBeenFound  = false;
+                    for (u_row = 0; u_row < 9; u_row++) {
+                        if (row != u_row) {
+                            if (JSON.stringify(puzzle[u_row][col]) == JSON.stringify(puzzle[row][col])) {
+                                console.log("Coupling found in column: " + puzzle[u_row][col]);
+                                break;
+                            }
                         }
                     }
                 }
@@ -153,8 +214,14 @@ function solveSudoku(puzzle) {
                 checkForValuesInBlock(blockY+2, blockX,   blockY, blockX);
                 checkForValuesInBlock(blockY+2, blockX+1, blockY, blockX);
                 checkForValuesInBlock(blockY+2, blockX+2, blockY, blockX);
+
+                // Coupling check
             }
         }
+
+
+
+        // Option uniqueness: [3,4,5,7,9] in last block - 7 is the only value this can be. Cell has a unique option for row, col or block
     }
     printProgress();
     return puzzle;
