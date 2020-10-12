@@ -93,6 +93,48 @@ function solveSudoku(puzzle) {
         return complete;
     }
 
+    function iterateNextCellInBlock(cell) {
+        if (cell.x == blockX + 2 && cell.y == blockY + 2) {
+            cell = null; // we're on the last cell - set iterator to null
+        } else if (cell.x < blockX + 2) {
+            cell.x++;
+        } else if (cell.x == blockX + 2) {
+            cell.x = blockX;
+            cell.y++;
+        } else {
+            console.log("WFT this should not happen!")
+        }
+        return cell;
+    }
+
+    function processCoupledCellsInBlock(blockY, blockX) {
+        let keepProcessing = true;
+        for (cell = {y: blockY, x: blockX}; cell != null && keepProcessing; cell = iterateNextCellInBlock(cell)) {
+            if (Array.isArray(puzzle[cell.y][cell.x]) && puzzle[cell.y][cell.x].length == 2)
+            for (cellToCompare = {y: blockY, x: blockX}; cellToCompare != null && keepProcessing; cellToCompare = iterateNextCellInBlock(cellToCompare)) {
+                if (JSON.stringify(cell) != JSON.stringify(cellToCompare)) {
+                    if (JSON.stringify(puzzle[cell.y][cell.x]) == JSON.stringify(puzzle[cellToCompare.y][cellToCompare.x])) {
+                        // Remove coupled options from other cells in blocked
+                        const cuplet1 = puzzle[cell.y][cell.x][0];
+                        const cuplet2 = puzzle[cell.y][cell.x][1];
+                        if (cuplet1 == undefined) {
+                            console.log("argh!!")
+                        }
+                        // console.log(`Found couplet in block! ${cuplet1} and ${cuplet2}`);
+
+                        for (cellToRemoveFrom = {y: blockY, x: blockX}; cellToRemoveFrom != null; cellToRemoveFrom = iterateNextCellInBlock(cellToRemoveFrom)) {
+                            if (JSON.stringify(cellToRemoveFrom) != JSON.stringify(cellToCompare) && JSON.stringify(cell) != JSON.stringify(cellToRemoveFrom) ) {
+                                puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x] = arrayRemove(puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x], cuplet1);
+                                puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x] = arrayRemove(puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x], cuplet2);
+                            }
+                        }
+                        keepProcessing = false;
+                    }
+                }
+            }
+        }
+    }
+
     while(iterations < maxIterations && !isPuzzleComplete()) {
         iterations++;
         for (row = 0; row < 9; row++) {
@@ -168,11 +210,10 @@ function solveSudoku(puzzle) {
 
                 // Coupling: e.g. [1,2] & [1,2] in block/row/column => remove these options from rest of block/row/column
                 if (Array.isArray(puzzle[row][col]) && puzzle[row][col].length == 2) {
-                    let hasMatchingCoupleBeenFound  = false;
                     for (u_col = 0; u_col < 9; u_col++) {
                         if (col != u_col) {
                             if (JSON.stringify(puzzle[row][u_col]) == JSON.stringify(puzzle[row][col])) {
-                                console.log("Coupling found in row: " + puzzle[row][u_col]);
+                                // console.log("Coupling found in row: " + puzzle[row][u_col]);
                                 const cuplet1 = puzzle[row][u_col][0];
                                 const cuplet2 = puzzle[row][u_col][1];
 
@@ -188,11 +229,10 @@ function solveSudoku(puzzle) {
                     }
                 }
                 if (Array.isArray(puzzle[row][col]) && puzzle[row][col].length == 2) {
-                    let hasMatchingCoupleBeenFound  = false;
                     for (u_row = 0; u_row < 9; u_row++) {
                         if (row != u_row) {
                             if (JSON.stringify(puzzle[u_row][col]) == JSON.stringify(puzzle[row][col])) {
-                                console.log("Coupling found in column: " + puzzle[u_row][col]);
+                                // console.log("Coupling found in column: " + puzzle[u_row][col]);
                                 const cuplet1 = puzzle[u_row][col][0];
                                 const cuplet2 = puzzle[u_row][col][1];
 
@@ -213,21 +253,13 @@ function solveSudoku(puzzle) {
         // Check within each 3x3 block which cells have a value
         for(blockX = 0; blockX < 9; blockX = blockX + 3 ) {
             for(blockY = 0; blockY < 9; blockY = blockY + 3) {
-                checkForValuesInBlock(blockY,   blockX,   blockY, blockX);
-                checkForValuesInBlock(blockY,   blockX+1, blockY, blockX);
-                checkForValuesInBlock(blockY,   blockX+2, blockY, blockX);
-                checkForValuesInBlock(blockY+1, blockX,   blockY, blockX);
-                checkForValuesInBlock(blockY+1, blockX+1, blockY, blockX);
-                checkForValuesInBlock(blockY+1, blockX+2, blockY, blockX);
-                checkForValuesInBlock(blockY+2, blockX,   blockY, blockX);
-                checkForValuesInBlock(blockY+2, blockX+1, blockY, blockX);
-                checkForValuesInBlock(blockY+2, blockX+2, blockY, blockX);
-
+                for (cell = {y: blockY, x: blockX}; cell != null; cell = iterateNextCellInBlock(cell)) {
+                    checkForValuesInBlock(cell.y, cell.x, blockY, blockX);
+                }
                 // Coupling check
+                processCoupledCellsInBlock(blockY, blockX);
             }
         }
-
-
 
         // Option uniqueness: [3,4,5,7,9] in last block - 7 is the only value this can be. Cell has a unique option for row, col or block
     }
