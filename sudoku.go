@@ -129,7 +129,7 @@ func solveSudoku(puzzle [][]string) {
 					for _, option := range puzzle[row][col] {
 						hasOptionBeenFoundInColumn := false
 						for uRow := 0; uRow < 9 && !hasOptionBeenFoundInColumn; uRow++ {
-							if row != uRow && len(puzzle[uRow][col]) > 1 {
+							if row != uRow {
 								hasOptionBeenFoundInColumn = strings.Index(puzzle[uRow][col], string(option)) != -1
 							}
 						}
@@ -159,7 +159,7 @@ func solveSudoku(puzzle [][]string) {
 					for _, option := range puzzle[row][col] {
 						hasOptionBeenFoundInRow := false
 						for uCol := 0; uCol < 9 && !hasOptionBeenFoundInRow; uCol++ {
-							if col != uCol && len(puzzle[row][uCol]) > 1 {
+							if col != uCol {
 								hasOptionBeenFoundInRow = strings.Index(puzzle[row][uCol], string(option)) != -1
 							}
 						}
