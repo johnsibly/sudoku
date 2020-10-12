@@ -182,7 +182,6 @@ function solveSudoku(puzzle) {
                                         puzzle[row][remove_col] = arrayRemove(puzzle[row][remove_col], cuplet2);
                                     }
                                 }
-                                
                                 break;
                             }
                         }
@@ -194,6 +193,15 @@ function solveSudoku(puzzle) {
                         if (row != u_row) {
                             if (JSON.stringify(puzzle[u_row][col]) == JSON.stringify(puzzle[row][col])) {
                                 console.log("Coupling found in column: " + puzzle[u_row][col]);
+                                const cuplet1 = puzzle[u_row][col][0];
+                                const cuplet2 = puzzle[u_row][col][1];
+
+                                for (remove_row = 0; remove_row < 9; remove_row++) {
+                                    if (remove_row != row && remove_row != u_row) {
+                                        puzzle[remove_row][col] = arrayRemove(puzzle[remove_row][col], cuplet1);
+                                        puzzle[remove_row][col] = arrayRemove(puzzle[remove_row][col], cuplet2);
+                                    }
+                                }
                                 break;
                             }
                         }
