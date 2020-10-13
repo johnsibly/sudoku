@@ -124,13 +124,12 @@ function solveSudoku(puzzle) {
             for (cellToCompare = {y: blockY, x: blockX}; cellToCompare != null && keepProcessing; cellToCompare = iterateNextCellInBlock(cellToCompare)) {
                 if (JSON.stringify(cell) != JSON.stringify(cellToCompare)) {
                     if (JSON.stringify(puzzle[cell.y][cell.x]) == JSON.stringify(puzzle[cellToCompare.y][cellToCompare.x])) {
-                        // Remove coupled options from other cells in blocked
+                        // Remove coupled options from other cells in block
                         const cuplet1 = puzzle[cell.y][cell.x][0];
                         const cuplet2 = puzzle[cell.y][cell.x][1];
                         if (cuplet1 == undefined) {
                             console.log("argh!!")
                         }
-                        // console.log(`Found couplet in block! ${cuplet1} and ${cuplet2}`);
 
                         for (cellToRemoveFrom = {y: blockY, x: blockX}; cellToRemoveFrom != null; cellToRemoveFrom = iterateNextCellInBlock(cellToRemoveFrom)) {
                             if (JSON.stringify(cellToRemoveFrom) != JSON.stringify(cellToCompare) && JSON.stringify(cell) != JSON.stringify(cellToRemoveFrom) ) {
