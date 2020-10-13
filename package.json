@@ -4,7 +4,7 @@
   "description": "",
   "main": "sudoku.js",
   "devDependencies": {
-    "jest": "^24.8.0"
+    "jest": "^26.5.3"
   },
   "scripts": {
     "test": "jest tests"
