@@ -89,6 +89,54 @@ func checkForValuesInBlock(puzzle [][]string, cellY int, cellX int, blockY int, 
 	}
 }
 
+type cellCoordinate struct {
+	y          int
+	x          int
+	outOfRange bool
+}
+
+func iterateNextCellInBlock(cell cellCoordinate, blockY int, blockX int) cellCoordinate {
+	if cell.x == blockX+2 && cell.y == blockY+2 {
+		cell.outOfRange = true
+	} else if cell.x < blockX+2 {
+		cell.x++
+	} else if cell.x == blockX+2 {
+		cell.x = blockX
+		cell.y++
+	} else {
+		fmt.Println("WFT this should not happen!")
+	}
+	return cell
+}
+
+func processCoupledCellsInBlock(puzzle [][]string, blockY int, blockX int) {
+	keepProcessing := true
+	cell := cellCoordinate{y: blockY, x: blockX, outOfRange: false}
+	for ; !cell.outOfRange && keepProcessing; cell = iterateNextCellInBlock(cell, blockY, blockX) {
+		if len(puzzle[cell.y][cell.x]) == 2 {
+			cellToCompare := cellCoordinate{y: blockY, x: blockX, outOfRange: false}
+			for ; !cellToCompare.outOfRange && keepProcessing; cellToCompare = iterateNextCellInBlock(cellToCompare, blockY, blockX) {
+				if cell != cellToCompare {
+					if puzzle[cell.y][cell.x] == puzzle[cellToCompare.y][cellToCompare.x] {
+						// Remove coupled options from other cells in block
+						cuplet1 := string(puzzle[cell.y][cell.x][0])
+						cuplet2 := string(puzzle[cell.y][cell.x][1])
+						cellToRemoveFrom := cellCoordinate{y: blockY, x: blockX, outOfRange: false}
+						for ; !cellToRemoveFrom.outOfRange; cellToRemoveFrom = iterateNextCellInBlock(cellToRemoveFrom, blockY, blockX) {
+							if cellToRemoveFrom != cellToCompare && cell != cellToRemoveFrom {
+								puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x] = removeOption(puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x], cuplet1)
+								puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x] = removeOption(puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x], cuplet2)
+							}
+						}
+						keepProcessing = false
+					}
+				}
+			}
+
+		}
+	}
+}
+
 // type blockBitMask byte
 
 const (
@@ -291,6 +339,8 @@ func solveSudoku(puzzle [][]string) {
 				checkForValuesInBlock(puzzle, blockY+2, blockX, blockY, blockX)
 				checkForValuesInBlock(puzzle, blockY+2, blockX+1, blockY, blockX)
 				checkForValuesInBlock(puzzle, blockY+2, blockX+2, blockY, blockX)
+				// Coupling check
+				processCoupledCellsInBlock(puzzle, blockY, blockX)
 			}
 		}
 
