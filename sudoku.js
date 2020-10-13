@@ -145,6 +145,108 @@ function solveSudoku(puzzle) {
         }
     }
 
+    function checkRowBlockAffinity(){
+        const blockBitMask = {
+            NONE: 0b000,
+            ONE: 0b001,
+            TWO: 0b010,
+            THREE: 0b100
+        }
+
+        function incrementBlockCount(blockCount, col) {
+            const index = Math.floor(col/3);
+            blockCount[index]++;
+        }
+        function getBlockAffinityInRow(row, option) {
+            let blockAffinityIndex = blockBitMask.NONE;
+            let blockCount = [0, 0, 0];
+            for (col = 0; col < 9; col++) {
+                const cell = puzzle[row][col];
+                if (Array.isArray(cell)) {
+                    if (cell.includes(option)) {
+                        incrementBlockCount(blockCount, col);
+                    }
+                } else if (cell == option) {
+                    incrementBlockCount(blockCount, col);
+                }
+            }
+
+            if (blockCount[0] == 0 && blockCount[1] == 0) {
+                blockAffinityIndex = blockBitMask.THREE;
+            } else if (blockCount[0] == 0 && blockCount[2] == 0) {
+                blockAffinityIndex = blockBitMask.TWO;
+            } else if (blockCount[1] == 0 && blockCount[2] == 0) {
+                blockAffinityIndex = blockBitMask.ONE;
+            }
+
+            return blockAffinityIndex;
+        }
+
+        function removeOtherOptionsFromRow(rowAffinity, rowIndex, option) {
+            for (col = 0; col < 9; col++) {
+                if (rowAffinity == blockBitMask.ONE && col > 2) {
+                    puzzle[rowIndex][col] = arrayRemove(puzzle[rowIndex][col], option);
+                } else if (rowAffinity == blockBitMask.TWO && (col < 3 || col > 5)) {
+                    puzzle[rowIndex][col] = arrayRemove(puzzle[rowIndex][col], option);
+                } else if (rowAffinity == blockBitMask.THREE && col < 6) {
+                    puzzle[rowIndex][col] = arrayRemove(puzzle[rowIndex][col], option);
+                }
+            }
+        }
+
+        for (option = 0; option < 9; option++){
+            const onlyLastThreeBits = 0b111;
+
+            // check top set of blocks
+            let row0Affinity = getBlockAffinityInRow(0, option);
+            let row1Affinity = getBlockAffinityInRow(1, option);
+            let row2Affinity = getBlockAffinityInRow(2, option);
+
+            if (row1Affinity && row2Affinity) {
+                row0Affinity = onlyLastThreeBits & ~(row1Affinity | row2Affinity);
+                removeOtherOptionsFromRow(row0Affinity, 0, option)
+            } else if (row0Affinity && row2Affinity) {
+                row1Affinity = onlyLastThreeBits & ~(row0Affinity | row2Affinity);
+                removeOtherOptionsFromRow(row1Affinity, 1, option)
+            } else if (row0Affinity && row1Affinity) {
+                row2Affinity = onlyLastThreeBits & ~(row0Affinity | row1Affinity);
+                removeOtherOptionsFromRow(row2Affinity, 2, option)
+            }
+
+            // check middle set of blocks
+            let row3Affinity = getBlockAffinityInRow(3, option);
+            let row4Affinity = getBlockAffinityInRow(4, option);
+            let row5Affinity = getBlockAffinityInRow(5, option);
+
+            if (row4Affinity && row5Affinity) {
+                row3Affinity = onlyLastThreeBits & ~(row4Affinity | row5Affinity);
+                removeOtherOptionsFromRow(row3Affinity, 3, option)
+            } else if (row3Affinity && row5Affinity) {
+                row4Affinity = onlyLastThreeBits & ~(row3Affinity | row5Affinity);
+                removeOtherOptionsFromRow(row4Affinity, 4, option)
+            } else if (row3Affinity && row4Affinity) {
+                row5Affinity = onlyLastThreeBits & ~(row3Affinity | row4Affinity);
+                removeOtherOptionsFromRow(row5Affinity, 5, option)
+            }
+
+            // check bottom set of blocks
+            let row6Affinity = getBlockAffinityInRow(6, option);
+            let row7Affinity = getBlockAffinityInRow(7, option);
+            let row8Affinity = getBlockAffinityInRow(8, option);
+
+            if (row7Affinity && row8Affinity) {
+                row6Affinity = onlyLastThreeBits & ~(row7Affinity | row8Affinity);
+                removeOtherOptionsFromRow(row6Affinity, 6, option)
+            } else if (row6Affinity && row8Affinity) {
+                row7Affinity = onlyLastThreeBits & ~(row6Affinity | row8Affinity);
+                removeOtherOptionsFromRow(row7Affinity, 7, option)
+            } else if (row6Affinity && row7Affinity) {
+                row8Affinity = onlyLastThreeBits & ~(row6Affinity | row7Affinity);
+                removeOtherOptionsFromRow(row8Affinity, 8, option)
+            }
+        }
+    }
+
     while(iterations < maxIterations && !isPuzzleComplete()) {
         iterations++;
         for (row = 0; row < 9; row++) {
@@ -270,6 +372,8 @@ function solveSudoku(puzzle) {
                 processCoupledCellsInBlock(blockY, blockX);
             }
         }
+
+        checkRowBlockAffinity();
 
         // Option uniqueness: [3,4,5,7,9] in last block - 7 is the only value this can be. Cell has a unique option for row, col or block
     }
