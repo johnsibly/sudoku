@@ -193,10 +193,9 @@ function solveSudoku(puzzle) {
                 }
             }
         }
-
+        
+        const onlyLastThreeBits = 0b111;
         for (option = 0; option < 9; option++){
-            const onlyLastThreeBits = 0b111;
-
             // check top set of blocks
             let row0Affinity = getBlockAffinityInRow(0, option);
             let row1Affinity = getBlockAffinityInRow(1, option);
@@ -375,7 +374,7 @@ function solveSudoku(puzzle) {
 
         checkRowBlockAffinity();
 
-        // Option uniqueness: [3,4,5,7,9] in last block - 7 is the only value this can be. Cell has a unique option for row, col or block
+        // Possible TODO... Option uniqueness: [3,4,5,7,9] in last block - 7 is the only value this can be. Cell has a unique option for row, col or block
     }
     printProgress();
     return puzzle;
