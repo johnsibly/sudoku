@@ -4,6 +4,15 @@ import (
 	"testing"
 )
 
+func solveAndValidate(puzzle [][]string, t *testing.T) {
+	solveSudoku(puzzle)
+	solved := isPuzzleSolved(puzzle)
+	if !solved {
+		t.Error("Should have been able to solve puzzle")
+		prettyPrint(puzzle)
+	}
+}
+
 func TestPuzzle1Easy(t *testing.T) {
 	puzzle := [][]string{
 		{"5", "3", "0", "0", "7", "0", "0", "0", "0"},
@@ -15,13 +24,7 @@ func TestPuzzle1Easy(t *testing.T) {
 		{"0", "6", "0", "0", "0", "0", "2", "8", "0"},
 		{"0", "0", "0", "4", "1", "9", "0", "0", "5"},
 		{"0", "0", "0", "0", "8", "0", "0", "7", "9"}}
-	// Passed by reference to solution is written to puzzle
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-	}
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle2Easy(t *testing.T) {
@@ -35,12 +38,7 @@ func TestPuzzle2Easy(t *testing.T) {
 		{"0", "0", "0", "5", "0", "9", "0", "0", "0"},
 		{"9", "0", "4", "0", "8", "0", "7", "0", "5"},
 		{"6", "0", "0", "1", "0", "7", "0", "0", "3"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-	}
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle3Easy(t *testing.T) {
@@ -54,12 +52,7 @@ func TestPuzzle3Easy(t *testing.T) {
 		{"0", "0", "9", "2", "0", "0", "5", "0", "4"},
 		{"8", "0", "0", "7", "0", "0", "0", "0", "6"},
 		{"0", "0", "0", "1", "9", "0", "7", "3", "0"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-	}
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle4Medium(t *testing.T) {
@@ -73,12 +66,7 @@ func TestPuzzle4Medium(t *testing.T) {
 		{"0", "0", "7", "0", "0", "5", "1", "0", "0"},
 		{"0", "0", "0", "7", "0", "9", "0", "0", "0"},
 		{"0", "0", "0", "0", "0", "0", "2", "0", "6"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-	}
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle5Medium(t *testing.T) {
@@ -92,12 +80,7 @@ func TestPuzzle5Medium(t *testing.T) {
 		{"0", "5", "0", "0", "7", "0", "1", "0", "0"},
 		{"0", "9", "4", "0", "0", "1", "5", "0", "0"},
 		{"0", "0", "7", "8", "4", "0", "0", "0", "2"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-		prettyPrint(puzzle)
-	}
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle6Hard(t *testing.T) {
@@ -111,11 +94,7 @@ func TestPuzzle6Hard(t *testing.T) {
 		{"0", "7", "0", "3", "0", "8", "0", "0", "0"},
 		{"0", "8", "0", "0", "0", "6", "0", "0", "0"},
 		{"0", "0", "2", "0", "7", "0", "0", "0", "5"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-	}
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle7Evil(t *testing.T) {
@@ -129,13 +108,7 @@ func TestPuzzle7Evil(t *testing.T) {
 		{"9", "0", "0", "4", "0", "3", "0", "0", "0"},
 		{"2", "0", "0", "0", "0", "0", "6", "0", "0"},
 		{"0", "0", "0", "0", "2", "0", "0", "5", "0"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-
-	}
-	prettyPrint(puzzle)
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle8Evil(t *testing.T) {
@@ -149,12 +122,7 @@ func TestPuzzle8Evil(t *testing.T) {
 		{"0", "0", "8", "0", "0", "9", "0", "0", "0"},
 		{"3", "0", "0", "8", "0", "2", "0", "0", "0"},
 		{"0", "0", "0", "0", "0", "0", "0", "5", "3"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-		prettyPrint(puzzle)
-	}
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle9TakeABreak(t *testing.T) {
@@ -168,12 +136,7 @@ func TestPuzzle9TakeABreak(t *testing.T) {
 		{"0", "0", "0", "0", "0", "7", "2", "3", "0"},
 		{"0", "0", "6", "4", "0", "3", "0", "7", "0"},
 		{"0", "5", "0", "0", "0", "0", "0", "0", "0"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-		prettyPrint(puzzle)
-	}
+	solveAndValidate(puzzle, t)
 }
 
 func TestPuzzle10TakeABreak(t *testing.T) {
@@ -187,10 +150,5 @@ func TestPuzzle10TakeABreak(t *testing.T) {
 		{"0", "0", "0", "0", "0", "5", "0", "0", "9"},
 		{"0", "3", "0", "0", "0", "0", "0", "6", "0"},
 		{"1", "4", "0", "0", "0", "2", "0", "0", "0"}}
-	solveSudoku(puzzle)
-	solved := isPuzzleSolved(puzzle)
-	if !solved {
-		t.Error("Should have been able to solve puzzle")
-		prettyPrint(puzzle)
-	}
+	solveAndValidate(puzzle, t)
 }
