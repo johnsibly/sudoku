@@ -27,14 +27,12 @@ function solveSudoku(puzzle) {
     // Initialise array with potential values
     // A single digit means cell value is known
     // If a cell contains an array instead, it contains the cell's potential values
-    for (row = 0; row < 9; row++) {
-        for (col = 0; col < 9; col++) {
-            if (puzzle[row][col] == 0) {
-                puzzle[row][col] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-            }
+    for (cell = {y: 0, x: 0}; cell != null; cell = iterateNextCellInPuzzle(cell)) {
+        if (puzzle[cell.y][cell.x] == 0) {
+            puzzle[cell.y][cell.x] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         }
     }
-
+    
     function columnIncludesKnownValue(columnIndex, value) {
         let containsValue = false;
         for(rowIndex = 0; rowIndex < 9; rowIndex++) {
@@ -83,14 +81,26 @@ function solveSudoku(puzzle) {
 
     function isPuzzleComplete() {
         let complete = true;
-        for (row = 0; row < 9 && complete; row++) {
-            for (col = 0; col < 9 && complete; col++) {
-                if (Array.isArray(puzzle[row][col])) {
-                    complete = false;
-                }
+        for (cell = {y: 0, x: 0}; cell != null; cell = iterateNextCellInPuzzle(cell)) {
+            if (Array.isArray(puzzle[cell.y][cell.x])) {
+                complete = false;
             }
         }
         return complete;
+    }
+
+    function iterateNextCellInPuzzle(cell) {
+        if (cell.x == 8 && cell.y == 8) {
+            cell = null; // we're on the last cell - set iterator to null
+        } else if (cell.x < 8) {
+            cell.x++;
+        } else if (cell.x == 8) {
+            cell.x = 0;
+            cell.y++;
+        } else {
+            console.log("WFT this should not happen!")
+        }
+        return cell;
     }
 
     function iterateNextCellInBlock(cell) {
