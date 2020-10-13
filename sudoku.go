@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math"
+	"strconv"
 	"strings"
 )
 
@@ -87,8 +89,112 @@ func checkForValuesInBlock(puzzle [][]string, cellY int, cellX int, blockY int, 
 	}
 }
 
+// type blockBitMask byte
+
+const (
+	none  = byte(0b000)
+	one   = byte(0b001)
+	two   = byte(0b010)
+	three = byte(0b100)
+)
+
+func incrementBlockCount(blockCount []int, col int) {
+	index := math.Floor(float64(col) / 3)
+	blockCount[int(index)]++
+}
+
+func getBlockAffinityInRow(puzzle [][]string, row int, option string) byte {
+	blockAffinityIndex := none
+	blockCount := []int{0, 0, 0}
+	for col, cell := range puzzle[row] {
+		if len(cell) > 1 {
+			if strings.Index(cell, option) != -1 {
+				incrementBlockCount(blockCount, col)
+			}
+		} else if cell == option {
+			incrementBlockCount(blockCount, col)
+		}
+	}
+
+	if blockCount[0] == 0 && blockCount[1] == 0 {
+		blockAffinityIndex = three
+	} else if blockCount[0] == 0 && blockCount[2] == 0 {
+		blockAffinityIndex = two
+	} else if blockCount[1] == 0 && blockCount[2] == 0 {
+		blockAffinityIndex = one
+	}
+
+	return blockAffinityIndex
+}
+
+func removeOtherOptionsFromRow(puzzle [][]string, rowAffinity byte, rowIndex int, option string) {
+	for col := 0; col < 9; col++ {
+		if rowAffinity == one && col > 2 {
+			puzzle[rowIndex][col] = removeOption(puzzle[rowIndex][col], string(option))
+		} else if rowAffinity == two && (col < 3 || col > 5) {
+			puzzle[rowIndex][col] = removeOption(puzzle[rowIndex][col], string(option))
+		} else if rowAffinity == three && col < 6 {
+			puzzle[rowIndex][col] = removeOption(puzzle[rowIndex][col], string(option))
+		}
+	}
+}
+
+func checkRowBlockAffinity(puzzle [][]string) {
+	const onlyLastThreeBits = byte(0b111)
+	for o := 1; o <= 9; o++ {
+		// check top set of blocks
+		option := strconv.Itoa(o)
+		row0Affinity := getBlockAffinityInRow(puzzle, 0, option)
+		row1Affinity := getBlockAffinityInRow(puzzle, 1, option)
+		row2Affinity := getBlockAffinityInRow(puzzle, 2, option)
+
+		if row1Affinity > 0 && row2Affinity > 0 {
+			row0Affinity = onlyLastThreeBits & ^(row1Affinity | row2Affinity)
+			removeOtherOptionsFromRow(puzzle, row0Affinity, 0, option)
+		} else if row0Affinity > 0 && row2Affinity > 0 {
+			row1Affinity = onlyLastThreeBits & ^(row0Affinity | row2Affinity)
+			removeOtherOptionsFromRow(puzzle, row1Affinity, 1, option)
+		} else if row0Affinity > 0 && row1Affinity > 0 {
+			row2Affinity = onlyLastThreeBits & ^(row0Affinity | row1Affinity)
+			removeOtherOptionsFromRow(puzzle, row2Affinity, 2, option)
+		}
+
+		// check middle set of blocks
+		row3Affinity := getBlockAffinityInRow(puzzle, 3, option)
+		row4Affinity := getBlockAffinityInRow(puzzle, 4, option)
+		row5Affinity := getBlockAffinityInRow(puzzle, 5, option)
+
+		if row4Affinity > 0 && row5Affinity > 0 {
+			row3Affinity = onlyLastThreeBits & ^(row4Affinity | row5Affinity)
+			removeOtherOptionsFromRow(puzzle, row3Affinity, 3, option)
+		} else if row3Affinity > 0 && row5Affinity > 0 {
+			row4Affinity = onlyLastThreeBits & ^(row3Affinity | row5Affinity)
+			removeOtherOptionsFromRow(puzzle, row4Affinity, 4, option)
+		} else if row3Affinity > 0 && row4Affinity > 0 {
+			row5Affinity = onlyLastThreeBits & ^(row3Affinity | row4Affinity)
+			removeOtherOptionsFromRow(puzzle, row5Affinity, 5, option)
+		}
+
+		// check bottom set of blocks
+		row6Affinity := getBlockAffinityInRow(puzzle, 6, option)
+		row7Affinity := getBlockAffinityInRow(puzzle, 7, option)
+		row8Affinity := getBlockAffinityInRow(puzzle, 8, option)
+
+		if row7Affinity > 0 && row8Affinity > 0 {
+			row6Affinity = onlyLastThreeBits & ^(row7Affinity | row8Affinity)
+			removeOtherOptionsFromRow(puzzle, row6Affinity, 6, option)
+		} else if row6Affinity > 0 && row8Affinity > 0 {
+			row7Affinity = onlyLastThreeBits & ^(row6Affinity | row8Affinity)
+			removeOtherOptionsFromRow(puzzle, row7Affinity, 7, option)
+		} else if row6Affinity > 0 && row7Affinity > 0 {
+			row8Affinity = onlyLastThreeBits & ^(row6Affinity | row7Affinity)
+			removeOtherOptionsFromRow(puzzle, row8Affinity, 8, option)
+		}
+	}
+}
+
 func removeOption(cell string, option string) string {
-	if len(cell) == 1 {
+	if len(cell) == 1 && cell == option {
 		panic("We're trying to remove the final option - something's gone badly wrong")
 	}
 	return strings.Replace(cell, option, "", 1)
@@ -187,6 +293,8 @@ func solveSudoku(puzzle [][]string) {
 				checkForValuesInBlock(puzzle, blockY+2, blockX+2, blockY, blockX)
 			}
 		}
+
+		checkRowBlockAffinity(puzzle)
 		// fmt.Printf("Iteration %d\n", iteration)
 		// printPuzzleSize(puzzle)
 	}
