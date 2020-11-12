@@ -13,6 +13,7 @@
                 "-i"
             ],
             "internalConsoleOptions": "openOnSessionStart",
+            "runtimeExecutable": "/Users/john.sibly/.nvm/versions/node/v10.16.0/bin/node",
             "outFiles": [
                 "${workspaceRoot}/dist/**/*"
             ]
