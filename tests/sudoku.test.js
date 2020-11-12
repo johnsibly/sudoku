@@ -1,4 +1,7 @@
 const sudoku = require('../sudoku.js');
+const fs = require('fs');
+const puzzle1 = require('./puzzle1.json');
+const walkPath = '../tests/';
 
 beforeEach(() => {
 });
@@ -30,7 +33,47 @@ function isPuzzleComplete(puzzle) {
   return isSolved;
 }
 
-it('Test puzzle 1 (easy)', async () => {
+function walk(dir, done) {
+  fs.readdir(dir, function (error, list) {
+      if (error) {
+          return done(error);
+      }
+
+      let i = 0;
+
+      (function next () {
+          let file = list[i++];
+
+          if (!file) {
+              return done(null);
+          }
+          
+          file = dir + '/' + file;
+          
+          fs.stat(file, function (error, stat) {
+              if (stat && stat.isDirectory()) {
+                  walk(file, function (error) {
+                      next();
+                  });
+              } else {
+                  // do stuff to file here
+                  console.log(file);
+                  next();
+              }
+          });
+      })();
+  });
+};
+
+it('Read and solve all JSON files', async () => {
+  let done = false;
+  walk(walkPath, done);
+});
+
+it('Test puzzle 1 (easy)', () => {
+
+  console.log(puzzle1);
+
   const puzzle = [[5, 3, 0, 0, 7, 0, 0, 0, 0], 
                   [6, 0, 0, 1, 9, 5, 0, 0, 0],
                   [0, 9, 8, 0, 0, 0, 0, 6, 0],
@@ -44,7 +87,7 @@ it('Test puzzle 1 (easy)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 2 (easy)', async () => {
+it('Test puzzle 2 (easy)', () => {
   const puzzle = [[3, 0, 0, 8, 0, 1, 0, 0, 2], 
                   [2, 0, 1, 0, 3, 0, 6, 0, 4],
                   [0, 0, 0, 2, 0, 4, 0, 0, 0],
@@ -58,7 +101,7 @@ it('Test puzzle 2 (easy)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 3 (easy)', async () => {
+it('Test puzzle 3 (easy)', () => {
   const puzzle = [[0, 2, 1, 0, 7, 6, 0, 0, 0], 
                   [4, 0, 0, 0, 0, 3, 0, 0, 2],
                   [5, 0, 7, 0, 0, 9, 3, 0, 0],
@@ -72,7 +115,7 @@ it('Test puzzle 3 (easy)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 4 (medium)', async () => {
+it('Test puzzle 4 (medium)', () => {
   const puzzle = [[3, 6, 0, 0, 0, 0, 0, 0, 8], 
                   [2, 0, 0, 0, 0, 0, 0, 1, 0],
                   [1, 0, 0, 4, 0, 0, 0, 0, 0],
@@ -86,7 +129,7 @@ it('Test puzzle 4 (medium)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 5 (medium)', async () => {
+it('Test puzzle 5 (medium)', () => {
   const puzzle = [[4, 0, 0, 0, 3, 9, 8, 0, 0], 
                   [0, 0, 9, 1, 0, 0, 7, 4, 0],
                   [0, 0, 5, 0, 6, 0, 0, 9, 0],
@@ -100,7 +143,7 @@ it('Test puzzle 5 (medium)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 6 (hard)', async () => {
+it('Test puzzle 6 (hard)', () => {
   const puzzle = [[2, 0, 0, 0, 1, 0, 3, 0, 0], 
                   [0, 0, 0, 2, 0, 0, 0, 1, 0],
                   [0, 0, 0, 4, 0, 9, 0, 2, 0],
@@ -114,7 +157,7 @@ it('Test puzzle 6 (hard)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 7 (evil)', async () => {
+it('Test puzzle 7 (evil)', () => {
   const puzzle = [[0, 7, 0, 0, 8, 0, 0, 0, 0], 
                   [0, 0, 4, 0, 0, 0, 0, 0, 5],
                   [0, 0, 0, 5, 0, 6, 0, 0, 1],
@@ -128,7 +171,7 @@ it('Test puzzle 7 (evil)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 8 (hard from Take a break magazine)', async () => {
+it('Test puzzle 8 (hard from Take a break magazine)', () => {
   const puzzle = [[4, 0, 0, 0, 0, 0, 0, 0, 0], 
                   [0, 0, 0, 6, 5, 0, 0, 1, 0],
                   [9, 0, 0, 0, 0, 0, 2, 6, 0],
@@ -142,7 +185,7 @@ it('Test puzzle 8 (hard from Take a break magazine)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 9 (hard from Take a break magazine)', async () => {
+it('Test puzzle 9 (hard from Take a break magazine)', () => {
   const puzzle = [[0, 0, 5, 0, 0, 0, 8, 0, 0], 
                   [0, 0, 0, 9, 8, 0, 0, 0, 0],
                   [6, 0, 7, 0, 0, 0, 5, 0, 0],
@@ -156,7 +199,7 @@ it('Test puzzle 9 (hard from Take a break magazine)', async () => {
   expect(isPuzzleComplete(solved)).toEqual(true);
 });
 
-it('Test puzzle 10 (hard from Take a break magazine)', async () => {
+it('Test puzzle 10 (hard from Take a break magazine)', () => {
   const puzzle = [[8, 0, 0, 4, 0, 0, 0, 1, 0], 
                   [0, 0, 0, 6, 0, 0, 0, 9, 0],
                   [0, 0, 0, 2, 0, 0, 4, 3, 0],
