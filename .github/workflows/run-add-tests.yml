@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: jest --ci --coverage && codecov -t $CODECOV_TOKEN
+      - run: npm test --ci --coverage && codecov -t $CODECOV_TOKEN
   run_go_tests:
     runs-on: ubuntu-latest
     steps:
