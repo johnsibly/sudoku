@@ -105,3 +105,7 @@ dist
 .tern-port
 coverage.out
 suduko_coverage.png
+suduko-statement-coverage.svg
+.badges/badge-branches.svg
+.badges/badge-functions.svg
+.badges/badge-lines.svg

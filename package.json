@@ -4,10 +4,25 @@
   "description": "",
   "main": "sudoku.js",
   "devDependencies": {
-    "jest": "^26.5.3"
+    "jest": "^26.5.3",
+    "jest-badge-generator": "^1.1.5"
   },
   "scripts": {
-    "test": "jest tests"
+    "test": "jest --coverage",
+    "test:make-badges": "npm run test && jest-badge-generator"
+  },
+  "jest": {
+    "coverageReporters": [
+      "json",
+      "json-summary",
+      "lcov",
+      "text",
+      "text-summary"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.jsx?$"
   },
   "repository": {
     "type": "git",
@@ -18,8 +33,5 @@
   "bugs": {
     "url": "https://github.com/johnsibly/sudoku/issues"
   },
-  "homepage": "https://github.com/johnsibly/sudoku#readme",
-  "dependencies": {
-    "codecov": "^3.8.1"
-  }
+  "homepage": "https://github.com/johnsibly/sudoku#readme"
 }
