@@ -27,3 +27,6 @@ jobs:
           go-version: '^1.13.1'
       - run: npm ci # to get codecov in this container
       - run: go test -v && ./node_modules/codecov/bin/codecov -t ${{ secrets.CODECOV_TOKEN }}
+      - run: go get github.com/jpoles1/gopherbadger && gopherbadger
+      - run: mv coverage_badge.png suduko_coverage.png
+      - run: curl --location --request POST 'https://uzhf08x6h3.execute-api.eu-west-2.amazonaws.com/test/upload' --form 'file=@"./suduko_coverage.png"'
