@@ -4,8 +4,8 @@
   "description": "",
   "main": "sudoku.js",
   "devDependencies": {
-    "jest": "^26.5.3",
-    "jest-badge-generator": "^1.1.5"
+    "jest": "^27.3.1",
+    "jest-badge-generator": "^1.0.5"
   },
   "scripts": {
     "test": "jest --coverage",
