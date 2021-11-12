@@ -4,12 +4,24 @@
   "description": "",
   "main": "sudoku.js",
   "devDependencies": {
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "@typescript-eslint/parser": "^5.0.0",
+    "@vercel/ncc": "^0.31.1",
     "jest": "^27.3.1",
-    "jest-badge-generator": "^1.0.5"
+    "jest-badge-generator": "^1.0.5",
+    "js-yaml": "^4.1.0",
+    "prettier": "2.4.1",
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.4.4"
   },
   "scripts": {
-    "test": "jest --coverage",
-    "test:make-badges": "npm run test && jest-badge-generator"
+    "build": "tsc",
+    "format": "prettier --write '**/*.ts'",
+    "format-check": "prettier --check '**/*.ts'",
+    "test": "npm run build && jest --coverage",
+    "test:make-badges": "npm run build && npm run test && jest-badge-generator",
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
   },
   "jest": {
     "coverageReporters": [
