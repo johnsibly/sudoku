@@ -109,3 +109,7 @@ suduko-statement-coverage.svg
 .badges/badge-branches.svg
 .badges/badge-functions.svg
 .badges/badge-lines.svg
+
+# Compiled js files
+*.js
+*.map
