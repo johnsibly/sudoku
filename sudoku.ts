@@ -1,3 +1,4 @@
+
 /*
 const samplePuzzle = [[0, 7, 0, 0, 8, 0, 0, 0, 0], 
 [0, 0, 4, 0, 0, 0, 0, 0, 5],
@@ -25,7 +26,7 @@ interface Cell {
 }
 
 solveSudoku(samplePuzzle);
-function solveSudoku(puzzle: any[][]) {
+function solveSudoku(puzzle: number[][] | number[][][]) {
     const startTime = new Date();
     let iterations = 0;
     const maxIterations = 20;
@@ -53,13 +54,13 @@ function solveSudoku(puzzle: any[][]) {
         const stringPuzzle = JSON.stringify(puzzle);
         const executionTime = new Date().getTime() - startTime.getTime();
         let solvedPuzzleString = `Current size of stringified puzzle ${stringPuzzle.length}. Iterations = ${iterations}. Execution time = ${executionTime}ms\n`;
-        puzzle.forEach((row: any) => {
+        puzzle.forEach((row: number[] | number[][]) => {
             solvedPuzzleString += JSON.stringify(row) + '\n';
         });
         console.log(solvedPuzzleString);
     }
 
-    function arrayRemove(arrayToRemoveFrom: number[], value: number) { 
+    function arrayRemove(arrayToRemoveFrom: number | number[], value: number) { 
         if (!Array.isArray(arrayToRemoveFrom)) {
             return arrayToRemoveFrom;
         }
@@ -70,7 +71,7 @@ function solveSudoku(puzzle: any[][]) {
 
     function checkForValuesInBlock(cellY: number, cellX: number, blockY: number, blockX: number) {
         if (Array.isArray(puzzle[cellY][cellX])) {
-            puzzle[cellY][cellX].forEach((possibleOption: number) => {
+            (puzzle[cellY][cellX] as number[]).forEach((possibleOption: number) => {
                 let foundOptionInBlock = false;
                 for(let blockOffsetY = 0; blockOffsetY < 3; blockOffsetY++) {
                     for(let blockOffsetX = 0; blockOffsetX < 3; blockOffsetX++) {
@@ -122,27 +123,36 @@ function solveSudoku(puzzle: any[][]) {
         return cell;
     }
 
+    function getLength(array: number | number[]) {
+        if (Array.isArray(array)) {
+            return array.length;
+        } else {
+            return 1;
+        }
+    }
+
     function processCoupledCellsInBlock(blockY: number, blockX: number) {
         let keepProcessing = true;
         for (let cell = {y: blockY, x: blockX}; cell != null && keepProcessing; cell = iterateNextCellInBlock(cell, blockY, blockX)) {
-            if (Array.isArray(puzzle[cell.y][cell.x]) && puzzle[cell.y][cell.x].length == 2)
-            for (let cellToCompare = {y: blockY, x: blockX}; cellToCompare != null && keepProcessing; cellToCompare = iterateNextCellInBlock(cellToCompare, blockY, blockX)) {
-                if (JSON.stringify(cell) != JSON.stringify(cellToCompare)) {
-                    if (JSON.stringify(puzzle[cell.y][cell.x]) == JSON.stringify(puzzle[cellToCompare.y][cellToCompare.x])) {
-                        // Remove coupled options from other cells in block
-                        const cuplet1 = puzzle[cell.y][cell.x][0];
-                        const cuplet2 = puzzle[cell.y][cell.x][1];
-                        if (cuplet1 == undefined) {
-                            console.log("argh!!")
-                        }
-
-                        for (let cellToRemoveFrom = {y: blockY, x: blockX}; cellToRemoveFrom != null; cellToRemoveFrom = iterateNextCellInBlock(cellToRemoveFrom, blockY, blockX)) {
-                            if (JSON.stringify(cellToRemoveFrom) != JSON.stringify(cellToCompare) && JSON.stringify(cell) != JSON.stringify(cellToRemoveFrom) ) {
-                                puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x] = arrayRemove(puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x], cuplet1);
-                                puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x] = arrayRemove(puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x], cuplet2);
+            if (getLength(puzzle[cell.y][cell.x]) == 2) {
+                for (let cellToCompare = {y: blockY, x: blockX}; cellToCompare != null && keepProcessing; cellToCompare = iterateNextCellInBlock(cellToCompare, blockY, blockX)) {
+                    if (JSON.stringify(cell) != JSON.stringify(cellToCompare)) {
+                        if (JSON.stringify(puzzle[cell.y][cell.x]) == JSON.stringify(puzzle[cellToCompare.y][cellToCompare.x])) {
+                            // Remove coupled options from other cells in block
+                            const cuplet1 = (puzzle[cell.y][cell.x] as number[])[0];
+                            const cuplet2 = (puzzle[cell.y][cell.x] as number[])[1];
+                            if (cuplet1 == undefined) {
+                                console.log("argh!!")
                             }
+
+                            for (let cellToRemoveFrom = {y: blockY, x: blockX}; cellToRemoveFrom != null; cellToRemoveFrom = iterateNextCellInBlock(cellToRemoveFrom, blockY, blockX)) {
+                                if (JSON.stringify(cellToRemoveFrom) != JSON.stringify(cellToCompare) && JSON.stringify(cell) != JSON.stringify(cellToRemoveFrom) ) {
+                                    puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x] = arrayRemove(puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x], cuplet1);
+                                    puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x] = arrayRemove(puzzle[cellToRemoveFrom.y][cellToRemoveFrom.x], cuplet2);
+                                }
+                            }
+                            keepProcessing = false;
                         }
-                        keepProcessing = false;
                     }
                 }
             }
@@ -255,9 +265,9 @@ function solveSudoku(puzzle: any[][]) {
         for (let row = 0; row < 9; row++) {
             for (let col = 0; col < 9; col++) {
                 if (Array.isArray(puzzle[row][col])) { // this cell is an array so is unsolved
-                    puzzle[row][col].forEach((possibleOption: number) => {
+                    (puzzle[row][col] as number[]).forEach((possibleOption: number) => {
                         // check all the possible items for the cell. If there already exists one of the options in the row, then remove it as an option
-                        if (puzzle[row].includes(possibleOption)) {
+                        if ((puzzle[row] as number[]).includes(possibleOption)) {
                             puzzle[row][col] = arrayRemove(puzzle[row][col], possibleOption);
                         }
                     });
@@ -265,15 +275,15 @@ function solveSudoku(puzzle: any[][]) {
 
                 // check to see if one of the cell's options is unique to that column
                 if (Array.isArray(puzzle[row][col])) {
-                    for (let optionIndex = 0; optionIndex < puzzle[row][col].length; optionIndex++) {
+                    for (let optionIndex = 0; optionIndex < getLength(puzzle[row][col]); optionIndex++) {
                         let hasOptionBeenFoundInColumn  = false;
                         for (let u_row = 0; u_row < 9 && !hasOptionBeenFoundInColumn; u_row++) {
                             if (row != u_row)  {
                                 if (Array.isArray(puzzle[u_row][col])) {
-                                    hasOptionBeenFoundInColumn = puzzle[u_row][col].includes(puzzle[row][col][optionIndex]);
+                                    hasOptionBeenFoundInColumn = (puzzle[u_row][col] as number[]).includes((puzzle[row][col] as number[])[optionIndex]);
                                 } else {
                                     try {
-                                    hasOptionBeenFoundInColumn = puzzle[u_row][col] == puzzle[row][col][optionIndex];
+                                    hasOptionBeenFoundInColumn = puzzle[u_row][col] == (puzzle[row][col] as number[])[optionIndex];
                                     } catch (ex) {
                                         console.log(ex + "can't process " + puzzle[u_row][col])
                                     }
@@ -282,7 +292,7 @@ function solveSudoku(puzzle: any[][]) {
                         }
                         // if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
                         if (!hasOptionBeenFoundInColumn) {
-                            puzzle[row][col] = puzzle[row][col][optionIndex];
+                            puzzle[row][col] = (puzzle[row][col] as number[])[optionIndex];
                             break;
                         }
                     }
@@ -291,7 +301,7 @@ function solveSudoku(puzzle: any[][]) {
                 if (Array.isArray(puzzle[row][col])) { // this cell is an array so is unsolved
                     // The column that this cell in is
                     // check all the possible items for the cell. If there already exists one of the options in the column, then remove it as an option
-                    puzzle[row][col].forEach((possibleOption: number) => {
+                    (puzzle[row][col] as number[]).forEach((possibleOption: number) => {
                         if (columnIncludesKnownValue(col, possibleOption)) {
                             puzzle[row][col] = arrayRemove(puzzle[row][col], possibleOption);
                         }
@@ -300,15 +310,15 @@ function solveSudoku(puzzle: any[][]) {
 
                 // Check if one of cell's options unique to that row
                 if (Array.isArray(puzzle[row][col])) {
-                    for (let optionIndex = 0; optionIndex < puzzle[row][col].length; optionIndex++) {
+                    for (let optionIndex = 0; optionIndex < getLength(puzzle[row][col]); optionIndex++) {
                         let hasOptionBeenFoundInRow  = false;
                         for (let u_col = 0; u_col < 9 && !hasOptionBeenFoundInRow; u_col++) {
                             if (col != u_col) {
                                 if (Array.isArray(puzzle[row][u_col])) {
-                                    hasOptionBeenFoundInRow = puzzle[row][u_col].includes(puzzle[row][col][optionIndex]);
+                                    hasOptionBeenFoundInRow = (puzzle[row][u_col] as number[]).includes((puzzle[row][col] as number[])[optionIndex]);
                                 } else {
                                     try {
-                                        hasOptionBeenFoundInRow = puzzle[row][u_col] == puzzle[row][col][optionIndex];
+                                        hasOptionBeenFoundInRow = puzzle[row][u_col] == (puzzle[row][col] as number[])[optionIndex];
                                     } catch (ex) {
                                         console.log(ex + "can't process " + puzzle[row][u_col])
                                     }
@@ -317,39 +327,41 @@ function solveSudoku(puzzle: any[][]) {
                         }
                         // if the option we're looking at for this cell, does not exist in any other cell in the column, we must accept it
                         if (!hasOptionBeenFoundInRow) {
-                            puzzle[row][col] = puzzle[row][col][optionIndex];
+                            puzzle[row][col] = (puzzle[row][col] as number[])[optionIndex];
                             break;
                         }
                     }
                 }
 
                 // Coupling: e.g. [1,2] & [1,2] in block/row/column => remove these options from rest of block/row/column
-                if (Array.isArray(puzzle[row][col]) && puzzle[row][col].length == 2) {
+                if (getLength(puzzle[row][col]) == 2) {
                     for (let u_col = 0; u_col < 9; u_col++) {
                         if (col != u_col) {
                             if (JSON.stringify(puzzle[row][u_col]) == JSON.stringify(puzzle[row][col])) {
                                 // console.log("Coupling found in row: " + puzzle[row][u_col]);
-                                const cuplet1 = puzzle[row][u_col][0];
-                                const cuplet2 = puzzle[row][u_col][1];
+                                if (Array.isArray(puzzle[row][u_col])) {
+                                    const cuplet1 = (puzzle[row][u_col] as number[])[0];
+                                    const cuplet2 = (puzzle[row][u_col] as number[])[1];
 
-                                for (let remove_col = 0; remove_col < 9; remove_col++) {
-                                    if (remove_col != col && remove_col != u_col) {
-                                        puzzle[row][remove_col] = arrayRemove(puzzle[row][remove_col], cuplet1);
-                                        puzzle[row][remove_col] = arrayRemove(puzzle[row][remove_col], cuplet2);
+                                    for (let remove_col = 0; remove_col < 9; remove_col++) {
+                                        if (remove_col != col && remove_col != u_col) {
+                                            puzzle[row][remove_col] = arrayRemove(puzzle[row][remove_col], cuplet1);
+                                            puzzle[row][remove_col] = arrayRemove(puzzle[row][remove_col], cuplet2);
+                                        }
                                     }
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
                 }
-                if (Array.isArray(puzzle[row][col]) && puzzle[row][col].length == 2) {
+                if (getLength(puzzle[row][col]) == 2) {
                     for (let u_row = 0; u_row < 9; u_row++) {
                         if (row != u_row) {
                             if (JSON.stringify(puzzle[u_row][col]) == JSON.stringify(puzzle[row][col])) {
                                 // console.log("Coupling found in column: " + puzzle[u_row][col]);
-                                const cuplet1 = puzzle[u_row][col][0];
-                                const cuplet2 = puzzle[u_row][col][1];
+                                const cuplet1 = (puzzle[u_row][col] as number[])[0];
+                                const cuplet2 = (puzzle[u_row][col] as number[])[1];
 
                                 for (let remove_row = 0; remove_row < 9; remove_row++) {
                                     if (remove_row != row && remove_row != u_row) {
